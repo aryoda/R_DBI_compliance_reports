@@ -1,3 +1,10 @@
+# Local configuration file (do not even leak configuration strings :-)
+/localmachine*.config*
+
+/README.html
+/TODO.html
+
+
 # History files
 .Rhistory
 .Rapp.history
@@ -31,3 +38,4 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+.Rproj.user
