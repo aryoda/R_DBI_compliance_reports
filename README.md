@@ -19,7 +19,7 @@ The DBI conformity is checked by applying the unit tests of the package [`DBItes
 Currently the first goal is the check the Microsoft SQL Server 2017 using the DBI-ODBC "bridge"
 provided by the [`odbc`][2] package.
 
-The work is still in progress...
+The work is still in progress (see [TODO list](TODO.md))...
 
 Last status update: Jan 27, 2018
 
@@ -50,7 +50,7 @@ OK, to be realistic: I can't do this alone - so please contribute if you want th
 
 [1]: https://www.r-project.org/
 [2]: https://github.com/r-dbi/odbc
-[3]: https://github.com/r-dbi/DBItest DBItest
+[3]: https://github.com/r-dbi/DBItest
 [4]: https://www.docker.com/
 
 
