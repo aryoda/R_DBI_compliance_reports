@@ -20,7 +20,8 @@ source("localmachine.config.R")
 
 
 
-DBItest::make_context(odbc::odbc(), connect_args = mysql_con_args)
+# DBItest::make_context(odbc::odbc(), connect_args = mysql_con_args)
+DBItest::make_context(odbc::odbc(), connect_args = sqlite_con_args)
 
 ctx <- DBItest::get_default_context()
 con <- DBItest:::connect(ctx)
@@ -89,6 +90,15 @@ test.results[, .(num.of.tests = sum(nb),
 # 5:   MySQL 5.5.54-MariaDB             SQL         1434         98.2     26     13        0       0
 # 6:   MySQL 5.5.54-MariaDB        Metadata          186         84.4      4      1        0      25
 # 7:   MySQL 5.5.54-MariaDB Full compliance          109        100.0      0      0        0       0
+
+#    DB.name DB.version      test_group num.of.tests success.rate failed errors warnings skipped
+# 1:  SQLite   3.7.16.2 Getting started           11         90.9      1      0        0       0
+# 2:  SQLite   3.7.16.2          Driver          104        100.0      0      0        0       0
+# 3:  SQLite   3.7.16.2      Connection           84         97.6      2      0        0       0
+# 4:  SQLite   3.7.16.2          Result          809         90.7     75      3        0       0
+# 5:  SQLite   3.7.16.2             SQL         1406         96.9     43     15        0       0
+# 6:  SQLite   3.7.16.2        Metadata          186         85.5      2      1        0      25
+# 7:  SQLite   3.7.16.2 Full compliance          109        100.0      0      0        0       0
 
 
 # TODO: NiceRMarkdown report
