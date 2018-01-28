@@ -17,6 +17,9 @@ require(ggplot2)
 ## Test summary
 
 ```{r, echo = FALSE}
+# Parameterized reports:
+# http://rmarkdown.rstudio.com/developer_parameterized_reports.html?version=1.1.383&mode=desktop
+#
 # knitr::kable(res.summary, format = "hmtl", caption = "DBI conformity test summary")
 # print(res.summary)
 #
