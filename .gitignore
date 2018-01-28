@@ -39,3 +39,6 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .Rproj.user
+
+# Ignore all generated test result Excel files
+results/20*.xlsx

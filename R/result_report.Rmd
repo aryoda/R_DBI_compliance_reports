@@ -1,0 +1,42 @@
+---
+title: "DBI conformity test results"
+author: "Author 1"
+date: "January 28, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(knitr)
+require(kableExtra)
+require(ggplot2)
+```
+
+
+
+## Test summary
+
+```{r, echo = FALSE}
+# knitr::kable(res.summary, format = "hmtl", caption = "DBI conformity test summary")
+# print(res.summary)
+#
+# knitr recommends kable:
+# https://bookdown.org/yihui/bookdown/tables.html
+# Or use the extension kableExtra:
+# https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
+knitr::kable(total.res, "html", caption = "DBI conformity test summary")  %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  column_spec(3, background = "blue", color = "white", bold = TRUE)
+
+# knitr::kable(group.res, "html", caption = "Summary per test group")  %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+#   column_spec(4, background = "blue", color = "white", bold = TRUE)
+
+# Another version with different colors (conditional cell background)
+res.sum2 = copy(group.res)
+res.sum2[, success.rate := cell_spec(success.rate, "html", color = "white", 
+                    background = spec_color(success.rate, option = "C", begin = 0.2, end = 0.8))] %>%
+kable("html", escape = FALSE, caption = "Summary per test group V2")  %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+```
+
