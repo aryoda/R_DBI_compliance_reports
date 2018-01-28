@@ -1,0 +1,7 @@
+docker/* linguist-vendored
+*.md linguist-vendored
+LICENSE linguist-vendored
+*.html linguist-vendored
+*.txt linguist-vendored
+*.rda linguist-vendored
+*.xlsx linguist-vendored
