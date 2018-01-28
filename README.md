@@ -4,7 +4,7 @@ This repository is intended as a collection of reports that compare how much dif
 
 The DBI conformity is checked by applying the unit tests of the package [`DBItest`][3].
 
-**For a first example of a result report see this [real-life report](results/examples/example_result_report.html)
+**For a first example of a result report see this [real-life report](https://htmlpreview.github.io/?https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/results/examples/example_result_report.html)
 and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on postgreSQL).**
 
 
@@ -14,7 +14,7 @@ and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (
 1. Compare the working features of different drivers for the same database (e. g. `odbc` vs. `RPostgreSQL` packages)
 1. Help developers of DBI drivers to find gaps and improve their drivers toward full DBI-conformity
 1. Help database vendors (their developers) to close gaps in the database engines required to be DBI-conform
-   (e. g. for new big-data or nosql databases)
+   (e. g. for new big-data or noSQL databases)
 
 
 
