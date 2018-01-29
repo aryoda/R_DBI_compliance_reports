@@ -20,15 +20,15 @@ source("R/summarize_test_result.R")
 
 # inject connection strings without exposing them to the internet
 source("localmachine.config.R")
-# con_args <- mysql_con_args
-# con_args <- sqlite_con_args
-con_args <- postgres_con_args
+# con.args <- mysql_con_args
+# con.args <- sqlite_con_args
+con.args <- postgres_con_args
 
 
 DBI.driver <- odbc::odbc()
 
 
-res <- run_test_set(DBI.driver, postgres_con_args)
+res <- run_test_set(DBI.driver, con.args)  # last known working was: postgres_con_args
 
 group.res <- summarize.test.per.group(res)
 total.res <- summarize.all.test(res)

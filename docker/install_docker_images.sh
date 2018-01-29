@@ -23,6 +23,12 @@ docker pull postgres
 
 
 
+# Official repository:
+# MySQL is a widely used, open-source relational database management system (RDBMS).
+# https://hub.docker.com/_/mysql/
+docker pull mysql
+
+
 
 # Show all installed images
 docker images ls -a
