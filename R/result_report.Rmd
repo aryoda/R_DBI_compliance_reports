@@ -29,7 +29,7 @@ require(ggplot2)
 # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
 knitr::kable(total.summary, "html", caption = "DBI conformity test summary")  %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
-  column_spec(3, background = "blue", color = "white", bold = TRUE)
+  column_spec(3, background = derive.pct.HTML.color(total.summary$success.rate), color = "white", bold = TRUE)
 
 # knitr::kable(agg.per.group, "html", caption = "Summary per test group")  %>%
 #   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
@@ -37,8 +37,10 @@ knitr::kable(total.summary, "html", caption = "DBI conformity test summary")  %>
 
 # Another version with different colors (conditional cell background)
 res.sum2 = copy(agg.per.group)
-res.sum2[, success.rate := cell_spec(success.rate, "html", color = "white", 
-                    background = spec_color(success.rate, option = "C", begin = 0.2, end = 0.8))] %>%
+res.sum2[, success.rate := cell_spec(success.rate, "html", color = "white", bold = TRUE,
+                           background = derive.pct.HTML.color(success.rate))] %>%
+                           # background = spec_color(success.rate, option = "C", begin = 0.2, end = 0.8))] %>%
+                    
 kable("html", escape = FALSE, caption = "Summary per test group")  %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 ```

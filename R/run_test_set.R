@@ -20,8 +20,19 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
   # extract database engine information
   ctx <- DBItest::get_default_context()
   con <- DBItest:::connect(ctx)
-  DB.info <- odbc::dbGetInfo(con)
-  odbc::dbDisconnect(con)
+  DB.info <- dbGetInfo(con)  # odbc::
+  dbDisconnect(con)   # odbc::
+
+  # browser()
+
+  # some drivers require calling specific methods
+  if (length(DB.info) == 0) {
+    if (class(DBI.driver) == "SQLiteDriver") {
+      DB.info$dbms.name  <- "SQLite"
+      DB.info$db.version <- RSQLite::rsqliteVersion()["library"]
+    }
+  }
+
 
 
   # extract driver package name and version

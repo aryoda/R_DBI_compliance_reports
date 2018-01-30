@@ -2,6 +2,7 @@ library(tools)        # for file name handling...
 library(DBI)
 library(odbc)
 library(DBItest)
+library(RSQLite)      # devtools::install_github("rstats-db/RSQLite")
 library(testthat)
 library(data.table)
 library(stringi)
@@ -19,19 +20,24 @@ source("R/summarize_test_result.R")
 source("R/make_results_file_name.R")
 source("R/save_raw_results_as_xlsx.R")
 source("R/create_results_report.R")
+source("R/derive_pct_HTML_color.R")
 
 
 
 # inject connection strings without exposing them to the internet
 source("localmachine.config.R")
+
 # con.args <- mysql_con_args
 # con.args <- sqlite_con_args
-con.args <- postgreSQL_docker   # works
-con.args <- mysql_on_docker     # works
+
+# con.args <- postgreSQL_docker    # works
+# con.args <- mysql_on_docker      # works
+# con.args <- sqlite3_in_memory    # works (requires RSQLite)
+con.args <- sqlite3_odbc_in_mem  # works (using odbc)
 
 
-
-DBI.driver <- odbc::odbc()
+DBI.driver <- odbc::odbc()      # postgres and mysql
+# DBI.driver <- RSQLite::SQLite() # sqlite3
 
 
 
