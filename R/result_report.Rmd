@@ -1,7 +1,7 @@
 ---
 title: "DBI conformity test results"
 author: "Author 1"
-date: "January 28, 2018"
+date: '`r format(Sys.Date(), format = "%B %d, %Y")`'
 output: html_document
 ---
 
@@ -9,14 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 require(knitr)
 require(kableExtra)
+require(formattable)
 require(ggplot2)
 ```
 
 
 
-## Test summary
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, eval = FALSE}
+# snippet disabled since it shows a stupid result
+# but collects helpful links at least
+
 # Parameterized reports:
 # http://rmarkdown.rstudio.com/developer_parameterized_reports.html?version=1.1.383&mode=desktop
 #
@@ -27,21 +30,151 @@ require(ggplot2)
 # https://bookdown.org/yihui/bookdown/tables.html
 # Or use the extension kableExtra:
 # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-knitr::kable(total.summary, "html", caption = "DBI conformity test summary")  %>%
+knitr::kable(total.summary, "html", caption = "DBI conformity test summary (based on assertion counts)")  %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
-  column_spec(3, background = derive.pct.HTML.color(total.summary$success.rate), color = "white", bold = TRUE)
+  column_spec(3, background = derive.pct.HTML.color(total.summary$success.rate.asserts), color = "white", bold = TRUE)
 
 # knitr::kable(agg.per.group, "html", caption = "Summary per test group")  %>%
 #   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
 #   column_spec(4, background = "blue", color = "white", bold = TRUE)
 
-# Another version with different colors (conditional cell background)
-res.sum2 = copy(agg.per.group)
-res.sum2[, success.rate := cell_spec(success.rate, "html", color = "white", bold = TRUE,
-                           background = derive.pct.HTML.color(success.rate))] %>%
-                           # background = spec_color(success.rate, option = "C", begin = 0.2, end = 0.8))] %>%
-                    
-kable("html", escape = FALSE, caption = "Summary per test group")  %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 ```
 
+
+
+# Test set-up
+
+```{r, echo = FALSE}
+# Overview over the set set-up (infrastructure, software versions etc.)
+setup <- data.table(
+           Property = c("Testing date", "Database name", "Database version",
+                        "R version",
+                        "DBI driver package name", "DBI driver package version",
+                        "Client OS name", "Client OS platform", "Client OS version"),
+           Value    = c(format(res.raw$date[1], format = "%B %d, %Y"), res.raw$DB.name[1], res.raw$DB.version[1],
+                        res.raw$client.R.version[1],
+                        res.raw$DBI.driver.pkg[1], res.raw$DBI.driver.pkg.version[1],
+                        res.raw$client.OS.name[1], res.raw$client.OS.platform[1], res.raw$client.OS.version[1])
+)
+
+setup %>% 
+  kable("html", escape = FALSE, caption = "based on test case count")  %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+
+```
+
+
+
+# How to read the results
+
+## Test case vs. assertions
+
+The DBI conformity tests are done using the R package `DBItest` which uses the package `testthat` internally
+to execute the test cases.
+
+To understand the test results below you need to understand the meaning of two terms:
+
+1. **Test case**: A call of the `testthat::test_that()` function
+2. **Assert/Assertion**: A call of an `testthat::expect*()` function
+
+The test summaries can be based on a "per test case count" or one level finer on a "per checked assertion count".
+
+The **"per test case count"** gives a good overview which features are working as expected.
+
+The **per checked assertion count** indicates,
+
+* how many assertions a test case is checking (= how comprehensive a test case is)
+* how many problems caused a test case to fail (= how severe the problems are)
+
+
+
+## Semantics of the used colors
+
+There are only three colors used to mark test result rates (percentages):
+
+1. Green: Good or perfekt
+2. Orange: OK, but could be better
+3. Red: A severe problem
+
+
+
+# Summary of test results
+
+## Test case counts
+
+### Total summary
+
+```{r, echo = FALSE}
+# Total summary of the conformity test
+res.sum3 <- copy(total.test.case.summary)
+
+res.sum3[, ':='(
+                 test.case.result = cell_spec(test.case.result, "html", color = "white", bold = TRUE,
+                                    background = derive.strings.HTML.color(test.case.result)),
+                 total.test.case.quota = cell_spec(total.test.case.quota, "html", color = "white", bold = TRUE,
+                                         background = derive.strings.HTML.color(test.case.result)))
+        ] %>%
+kable("html", escape = FALSE, caption = "based on test case count")  %>%
+kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+
+```
+
+
+
+### Summary per test case group
+
+```{r, echo = FALSE}
+res4 <- copy(per.group.test.case.summary)
+
+res4[, test.cases.success.rate := cell_spec(test.cases.success.rate, "html", color = "white", bold = TRUE,
+                                             background = derive.pct.HTML.color(test.cases.success.rate))] %>%
+           kable("html", escape = FALSE, caption = "based on test case count")  %>%
+           kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+
+```
+
+
+
+## Checked assertions counts
+
+The summaries in this chapter are based on the assertion granularity which is one level
+finer than the test case summary and gives an impression on how may problems contributed
+to the failure (or success) of a test case.
+
+
+
+### Summary per test case group
+
+
+```{r, echo = FALSE}
+# Result summary per test test case group
+
+# Another version with different colors (conditional cell background)
+# TODO Test coloring the whole table cell with <TD BGCOLOR="...">
+res.sum2 = copy(agg.per.group)
+# formattable(results$agg.per.group, list(success.rate = color_bar("#2dc937")))
+# res.sum2[, success.rate2 := formattable(res.sum2, list(success.rate = color_bar("#2dc937")))] %>%
+
+# res.sum2 %>% list(success.rate = color_bar("#2dc937")) %>%
+
+res.sum2[, success.rate.asserts := cell_spec(success.rate.asserts, "html", color = "white", bold = TRUE,
+                                             background = derive.pct.HTML.color(success.rate.asserts))] %>%
+           kable("html", escape = FALSE, caption = "based on assertions count")  %>%
+           kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+
+```
+
+
+
+# Findings
+
+## List of failed assertions
+
+This section shall help you to
+
+1. get a first overview about problematic features of the used combination of database, database driver and R package
+   (e. g. to choose an alternative combination of you are in need of feature)
+2. show you the names of the `testthat` test cases in the `DBItest` package that failed
+   (e. g. to debug it as developer)
+
+TODO

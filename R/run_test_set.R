@@ -20,10 +20,11 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
   # extract database engine information
   ctx <- DBItest::get_default_context()
   con <- DBItest:::connect(ctx)
-  DB.info <- dbGetInfo(con)  # odbc::
+  DB.info <- dbGetInfo(con)              # is working when using odbc package but:
+  # Warning message: RSQLite::dbGetInfo() is deprecated: please use individual metadata functions instead
   dbDisconnect(con)   # odbc::
 
-  # browser()
+
 
   # some drivers require calling specific methods
   if (length(DB.info) == 0) {
@@ -33,16 +34,15 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
     }
   }
 
+  # Translation of SQL Server internal versions into official versions:
+  # https://support.microsoft.com/en-us/help/321185/how-to-determine-the-version--edition-and-update-level-of-sql-server-a
+  # 11.x = SQL Server 2012
+  # 12.x = SQL Server 2014
+  # 13.x = SQL Server 2016
+  # 14.x = SQL Server 2017
 
 
-  # extract driver package name and version
-  DBI.driver.pkg         <- attr(class(DBI.driver), "package")   # https://stackoverflow.com/q/48486771/4468078
-  DBI.driver.pkg.version <- paste(packageVersion(DBI.driver.pkg), sep = ".")
 
-
-
-  # Info about the client infrastructure the test is running on
-  client.info <- sessionInfo()
 
 
 
@@ -75,38 +75,11 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
   # get test results from testthat reporter
   rep <- get_reporter()
   test.results <- as.data.frame(rep$get_results())
-
-  # browser()
-
-
-  # Derive better test case names and enrich results with the used testing infrastructure
   setDT(test.results)
-  test.results[, test.group             := gsub("DBItest: ", "", context, fixed = TRUE)]
-  test.results[, test.name              := stri_replace_first_fixed(test, paste0(context, ": "), "", fixed = TRUE)]
-  test.results[, ID                     := 1:NROW(test.results)]
-  test.results[, DB.name                := DB.info$dbms.name]
-  test.results[, DB.version             := DB.info$db.version]
-  test.results[, DBI.driver.pkg         := DBI.driver.pkg]
-  test.results[, DBI.driver.pkg.version := DBI.driver.pkg.version]
-  test.results[, client.OS.name         := client.info$running]     # Sys.info()["sysname"]
-  test.results[, client.OS.platform     := client.info$platform]    # Sys.info()["release"]
-  test.results[, client.OS.version      := Sys.info()["release"]]
-  test.results[, date                   := Sys.Date()]    # date of testing (uses the current time zone)
-
-  # Remove unneccessary columns
-  test.results[, file                   := NULL]  # removes the column that is always empty
-  test.results[, context                := NULL]  # nicer in "test.group" now
-  test.results[, test                   := NULL]  # nicer in "test.name" now
 
 
 
-  # Reorder the columns (important ones first, header columns with static content at the end)
-  setcolorder(test.results, c("ID", "date", "test.group", "test.name",
-                              "nb", "failed", "skipped", "error", "warning",
-                              "user", "system", "real",
-                              "DB.name", "DB.version",
-                              "DBI.driver.pkg", "DBI.driver.pkg.version",
-                              "client.OS.name", "client.OS.platform", "client.OS.version" ))
+  enrich.raw.result(test.results, DB.info)
 
 
 

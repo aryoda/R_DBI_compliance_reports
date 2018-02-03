@@ -8,6 +8,17 @@ The DBI conformity is checked by applying the unit tests of the package [`DBItes
 and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on postgreSQL).**
 
 
+
+## `DBI` is...
+
+*"... a common interface between R/S and RDBMS that would allow users to access data stored on database servers in a uniform and predictable manner irrespective of the database engine. The interface defines a small set of classes and methods similar in spirit to Python’s DB-API, Java’s JDBC, Microsoft’s ODBC, Perl’s DBI, etc."*
+
+Source: https://cran.r-project.org/web/packages/DBI/vignettes/DBI-proposal.html
+
+Just remember: DBI = (a common) Database interface
+
+
+
 ## Use cases of the reports
 
 1. Decide if a DBI driver covers the requirements of a project for a specific database
