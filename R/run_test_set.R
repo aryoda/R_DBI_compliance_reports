@@ -57,7 +57,21 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
 
   # "test_all" can currently not be used due to bug in odbc/nano that blocks the execution if transactions are used:
   # https://github.com/r-dbi/odbc/issues/138
-  # DBItest::test_all(skip = c(".*package_name.*"))
+  # DBItest::test_all(skip = c("test name sub string"))
+  #
+  # skip well known transaction test cases that use rollback:
+  skip.for.sure = c("with_transaction_error_nested", "with_transaction_failure",
+                    "begin_rollback", "begin_write_rollback", "begin_commit_return_value", "begin_rollback_return_value",
+                    "begin_rollback", "begin_write_rollback")
+  skip.maybe    = c("begin_commit_closed",
+                    "begin_commit_invalid",
+                    "rollback_without_begin",
+                    "begin_begin",
+                    "begin_commit",
+                    "begin_write_commit",
+                    "begin_rollback",
+                    "begin_write_rollback")
+  skip = c(skip.for.sure, skip.maybe)
 
   # Work-around: Execute working tests manually (functions are from DBItest)
   #   Alternative: add blocking tests via the "skip" parameter
@@ -68,6 +82,7 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
   test_sql()
   test_meta()
   # test_transaction()  # hangs
+  test_transaction(skip = skip)  # doesn't hang (hopefully on every platform)
   test_compliance()
 
 

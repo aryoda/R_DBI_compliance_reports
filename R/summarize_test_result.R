@@ -9,12 +9,12 @@ summarize.all.testcase.count.based <- function(results) {
     errors          = sum(error),
     warnings        = sum(warning)
   )
-  , by = .(test.case.result)  # no need to group since we are using only one DB here
+  , by = .(TC.result)  # no need to group since we are using only one DB here
   ]
 
   # Share of each result status at the total result
-  res[, ':='(total.test.case.quota        = round(test.cases * 100 / sum(test.cases), 2),
-             total.checked.asserts.quota  = round(checked.asserts * 100 / sum(checked.asserts), 2))
+  res[, ':='(total.TC.share               = round(test.cases * 100 / sum(test.cases), 2),
+             total.checked.asserts.share  = round(checked.asserts * 100 / sum(checked.asserts), 2))
         # , by = .(DB.name, DB.version)    # no need to group since we are using only one DB here
       ]
 
@@ -23,11 +23,11 @@ summarize.all.testcase.count.based <- function(results) {
 
   setcolorder(res, c(# "DB.name",
                      # "DB.version",
-                     "test.case.result",
-                     "total.test.case.quota",
+                     "TC.result",
+                     "total.TC.share",
                      "test.cases",
                      "checked.asserts",
-                     "total.checked.asserts.quota",
+                     "total.checked.asserts.share",
                      "failed.asserts",
                      "skipped.asserts",
                      "errors",
@@ -45,12 +45,12 @@ summarize.all.testcase.count.based <- function(results) {
 summarize.per.group.testcase.count.based <- function(results) {
 
   res <- results[, .(
-    test.cases.success.rate  = round(NROW(.SD[test.case.result == "Passed",]) * 100 / .N, 2),
+    TC.success.rate          = round(NROW(.SD[TC.result == "Passed",]) * 100 / .N, 2),
     test.cases               = .N,
-    test.cases.passed        = NROW(.SD[test.case.result == "Passed",]),
-    test.cases.failed        = NROW(.SD[test.case.result == "Failed",]),
-    test.cases.skipped       = NROW(.SD[test.case.result == "Skipped",]),
-#    test.cases.unkown.result = NROW(.SD[test.case.result == "Unknown",]),  # should never happen so don't show it
+    passed.TCs               = NROW(.SD[TC.result == "Passed",]),
+    failed.TCs               = NROW(.SD[TC.result == "Failed",]),
+    skipped.TCs              = NROW(.SD[TC.result == "Skipped",]),
+#    test.cases.unkown.result = NROW(.SD[TC.result == "Unknown",]),  # should never happen so don't show it
     checked.asserts          = sum(nb),
     failed.asserts           = sum(failed),
     skipped.asserts          = sum(skipped),
@@ -72,7 +72,7 @@ summarize.per.group.testcase.count.based <- function(results) {
 summarize.all.assert.count.based <- function(results) {
 
   res <- results[, .(
-    success.rate.asserts   = round((1 - ((sum(skipped) + sum(failed)) / sum(nb))) * 100, 1), # TODO How to consider error count best?
+    asserts.success.rate   = round((1 - ((sum(skipped) + sum(failed)) / sum(nb))) * 100, 1), # TODO How to consider error count best?
     checked.asserts = sum(nb),
     failed.asserts  = sum(failed),
     skipped.asserts = sum(skipped),
@@ -93,7 +93,7 @@ summarize.per.group.assert.count.based <- function(results) {
 
   # Summarize the test results
   res <- results[, .(
-    success.rate.asserts   = round((1 - ((sum(skipped) + sum(failed)) / sum(nb))) * 100, 1), # unclear: also consider error count?
+    asserts.success.rate = round((1 - ((sum(skipped) + sum(failed)) / sum(nb))) * 100, 1), # unclear: also consider error count?
     checked.asserts = sum(nb),
     failed.asserts  = sum(failed),
     skipped.asserts = sum(skipped),

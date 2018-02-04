@@ -1,9 +1,22 @@
 ---
 title: "DBI conformity test results"
-author: "Author 1"
+author: "https://github.com/aryoda/R_DBI_DB_conformity_reports"
 date: '`r format(Sys.Date(), format = "%B %d, %Y")`'
-output: html_document
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
 ---
+
+<style type="text/css">
+div#TOC li {
+    list-style:none;
+    background-image:none;
+    background-repeat:none;
+    background-position:0; 
+}
+</style>
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -30,11 +43,20 @@ require(ggplot2)
 # https://bookdown.org/yihui/bookdown/tables.html
 # Or use the extension kableExtra:
 # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-knitr::kable(total.summary, "html", caption = "DBI conformity test summary (based on assertion counts)")  %>%
+#
+# https://davidgohel.github.io/flextable/
+#
+# HTML table packages overview and feature comparisson:
+# https://hughjonesd.github.io/huxtable/design-principles.html
+# https://htmlpreview.github.io/?https://github.com/ropenscilabs/packagemetrics/blob/master/inst/doc/tableGallery.html
+#
+# formattable seems to be very strong:
+# https://ropensci.org/blog/2017/06/27/packagemetrics/
+knitr::kable(total.assert.summary, "html", caption = "DBI conformity test summary (based on assertion counts)")  %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
-  column_spec(3, background = derive.pct.HTML.color(total.summary$success.rate.asserts), color = "white", bold = TRUE)
+  column_spec(3, background = derive.pct.HTML.color(total.assert.summary$success.rate.asserts), color = "white", bold = TRUE)
 
-# knitr::kable(agg.per.group, "html", caption = "Summary per test group")  %>%
+# knitr::kable(per.group.assert.result, "html", caption = "Summary per test group")  %>%
 #   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
 #   column_spec(4, background = "blue", color = "white", bold = TRUE)
 
@@ -47,13 +69,17 @@ knitr::kable(total.summary, "html", caption = "DBI conformity test summary (base
 ```{r, echo = FALSE}
 # Overview over the set set-up (infrastructure, software versions etc.)
 setup <- data.table(
-           Property = c("Testing date", "Database name", "Database version",
-                        "R version",
+           Property = c("Testing date",
+                        "DBItest package version",
+                        "Database name", "Database version",
                         "DBI driver package name", "DBI driver package version",
+                        "R version",
                         "Client OS name", "Client OS platform", "Client OS version"),
-           Value    = c(format(res.raw$date[1], format = "%B %d, %Y"), res.raw$DB.name[1], res.raw$DB.version[1],
-                        res.raw$client.R.version[1],
+           Value    = c(format(res.raw$date[1], format = "%B %d, %Y"),
+                        res.raw$DBItest.pkg.version[1],
+                        res.raw$DB.name[1], res.raw$DB.version[1],
                         res.raw$DBI.driver.pkg[1], res.raw$DBI.driver.pkg.version[1],
+                        res.raw$client.R.version[1],
                         res.raw$client.OS.name[1], res.raw$client.OS.platform[1], res.raw$client.OS.version[1])
 )
 
@@ -74,8 +100,8 @@ to execute the test cases.
 
 To understand the test results below you need to understand the meaning of two terms:
 
-1. **Test case**: A call of the `testthat::test_that()` function
-2. **Assert/Assertion**: A call of an `testthat::expect*()` function
+1. **Test case ("TC")**:      A call of the `testthat::test_that()` function
+2. **Assertion ("asserts")**: A call of an `testthat::expect*()` function
 
 The test summaries can be based on a "per test case count" or one level finer on a "per checked assertion count".
 
@@ -109,13 +135,15 @@ There are only three colors used to mark test result rates (percentages):
 res.sum3 <- copy(total.test.case.summary)
 
 res.sum3[, ':='(
-                 test.case.result = cell_spec(test.case.result, "html", color = "white", bold = TRUE,
-                                    background = derive.strings.HTML.color(test.case.result)),
-                 total.test.case.quota = cell_spec(total.test.case.quota, "html", color = "white", bold = TRUE,
-                                         background = derive.strings.HTML.color(test.case.result)))
+                 TC.result      = cell_spec(TC.result, "html", color = "white", bold = TRUE,
+                                              background = derive.strings.HTML.color(TC.result)),
+                 total.TC.share = cell_spec(total.TC.share, "html", color = "white", bold = TRUE,
+                                            background = derive.strings.HTML.color(TC.result)))
         ] %>%
 kable("html", escape = FALSE, caption = "based on test case count")  %>%
-kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
+kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+add_footnote(c("percentage of the test cases from the total number of test cases",
+               "BLUE color indicates partially or completely skipped test cases"), notation = "number") # related column header is still missing
 
 ```
 
@@ -126,8 +154,8 @@ kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```{r, echo = FALSE}
 res4 <- copy(per.group.test.case.summary)
 
-res4[, test.cases.success.rate := cell_spec(test.cases.success.rate, "html", color = "white", bold = TRUE,
-                                             background = derive.pct.HTML.color(test.cases.success.rate))] %>%
+res4[, TC.success.rate := cell_spec(TC.success.rate, "html", color = "white", bold = TRUE,
+                                             background = derive.pct.HTML.color(TC.success.rate))] %>%
            kable("html", escape = FALSE, caption = "based on test case count")  %>%
            kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 
@@ -151,14 +179,14 @@ to the failure (or success) of a test case.
 
 # Another version with different colors (conditional cell background)
 # TODO Test coloring the whole table cell with <TD BGCOLOR="...">
-res.sum2 = copy(agg.per.group)
-# formattable(results$agg.per.group, list(success.rate = color_bar("#2dc937")))
+res.sum2 = copy(per.group.assert.result)
+# formattable(results$per.group.assert.result, list(success.rate = color_bar("#2dc937")))
 # res.sum2[, success.rate2 := formattable(res.sum2, list(success.rate = color_bar("#2dc937")))] %>%
 
 # res.sum2 %>% list(success.rate = color_bar("#2dc937")) %>%
 
-res.sum2[, success.rate.asserts := cell_spec(success.rate.asserts, "html", color = "white", bold = TRUE,
-                                             background = derive.pct.HTML.color(success.rate.asserts))] %>%
+res.sum2[, asserts.success.rate := cell_spec(asserts.success.rate, "html", color = "white", bold = TRUE,
+                                             background = derive.pct.HTML.color(asserts.success.rate))] %>%
            kable("html", escape = FALSE, caption = "based on assertions count")  %>%
            kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 
@@ -168,7 +196,7 @@ res.sum2[, success.rate.asserts := cell_spec(success.rate.asserts, "html", color
 
 # Findings
 
-## List of failed assertions
+## List of failed test cases
 
 This section shall help you to
 
@@ -177,4 +205,80 @@ This section shall help you to
 2. show you the names of the `testthat` test cases in the `DBItest` package that failed
    (e. g. to debug it as developer)
 
-TODO
+```{r, echo = FALSE}
+details <- copy(res.raw[TC.result == "Failed", c(1, 3:11)]) [order(-error, TC.success.rate)]
+
+fnm <- footnote_marker_number(1, "html")
+new.col.names <- paste0(c("checked.asserts", "failed"), fnm)
+setnames(details, c("nb", "failed"), new.col.names)
+
+details[, ':='(TC.success.rate = cell_spec(TC.success.rate, "html", color = "white", bold = TRUE,
+                                           background = derive.pct.HTML.color(TC.success.rate)),
+                error = cell_spec(error, "html", color = "white", bold = TRUE,
+                                  background = ifelse(error == TRUE, "red", "#2dc937"))
+                )] %>%
+kable("html", escape = FALSE, caption = "One row per test case (ordered by criticality)")  %>%
+kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>% 
+add_footnote(c("based on counted assertions"), notation = "number")
+
+```
+
+
+
+## List of (partially or completly) skipped test cases
+
+This table shows the **blind spots** in the DBI conformity tests since not all assertions in the test cases
+have been checked.
+
+**Note:**
+
+The `testthat` "skip* functions are intended for use within test_that() blocks.
+
+- All expectations following the skip* statement within the same test_that block will be skipped.
+- **Test summaries that report skip counts are reporting how many test_that blocks triggered a skip* statement,
+not how many expectations were skipped.**
+
+Therefore no success rate is shown for skipped test cases even though some assertions (expectations may
+have been checked)!
+
+
+```{r, echo = FALSE}
+details <- copy(res.raw[TC.result == "Skipped", c(1, 3:8, 11)]) [order(TC.success.rate)]
+
+fnm <- footnote_marker_number(1, "html")
+new.col.names <- paste0(c("checked.asserts", "failed"), fnm)
+setnames(details, c("nb", "failed"), new.col.names)
+
+details[, ':='(TC.success.rate = cell_spec(TC.success.rate, "html", color = "white", bold = TRUE,
+                                           background = derive.pct.HTML.color(TC.success.rate))
+                )] %>%
+kable("html", escape = FALSE, caption = "One row per skipped test case (ordered by test gap rate)")  %>%
+kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+```
+
+
+# Detailled results
+
+This section shows the most granular test results: Per test case.
+
+
+```{r, echo = FALSE}
+full.details <- copy(res.raw[, c(1, 3:11)])
+
+fnm <- footnote_marker_number(1, "html")
+new.col.names <- paste0(c("checked.asserts", "failed"), fnm)
+setnames(full.details, c("nb", "failed"), new.col.names)
+
+
+full.details[, ':='(TC.success.rate = cell_spec(TC.success.rate, "html", color = "white", bold = TRUE,
+                                                background = derive.pct.HTML.color(TC.success.rate)),
+                    TC.result       = cell_spec(TC.result, "html", color = "white", bold = TRUE,
+                                                background = derive.strings.HTML.color(TC.result)),
+                    error           = cell_spec(error, "html", color = "white", bold = TRUE,
+                                                background = ifelse(error == TRUE, "red", "#2dc937"))
+                )] %>%
+kable("html", escape = FALSE, caption = "One row per test case")  %>%
+kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+```

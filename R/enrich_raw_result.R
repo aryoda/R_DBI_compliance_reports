@@ -17,6 +17,14 @@ enrich.raw.result <- function(result, DB.info) {
 
 
 
+  # DBItest package version -------------------------------------------------------------------------------------
+
+  DBItest.pkg.version <- paste(packageVersion("DBItest"), sep = ".")
+
+  result[, DBItest.pkg.version := DBItest.pkg.version]
+
+
+
   # used database ---------------------------------------------------------------------------
 
   result[, DB.name                := DB.info$dbms.name]
@@ -48,12 +56,12 @@ enrich.raw.result <- function(result, DB.info) {
 
   # test case status ------------------------------------------------------------------------------------------------
 
-  result[, test.case.result := NA_character_]
+  result[, TC.result := NA_character_]
 
-  result[is.na(test.case.result) & skipped == TRUE,               test.case.result := "Skipped"]
-  result[is.na(test.case.result) & (failed  > 0 | error == TRUE), test.case.result := "Failed"]
-  result[is.na(test.case.result) & (failed == 0),                 test.case.result := "Passed"]
-  result[is.na(test.case.result),                                 test.case.result := "Unknown"]
+  result[is.na(TC.result) & skipped == TRUE,               TC.result := "Skipped"]
+  result[is.na(TC.result) & (failed  > 0 | error == TRUE), TC.result := "Failed"]
+  result[is.na(TC.result) & (failed == 0),                 TC.result := "Passed"]
+  result[is.na(TC.result),                                 TC.result := "Unknown"] # should never happen
   # Warnings are ignored (and should never occur since DBItest handles every warning
   # as failed testthat expectation in the function "wrap_all_statements_with_expect_no_warning()"
 
@@ -61,10 +69,20 @@ enrich.raw.result <- function(result, DB.info) {
 
   # success.rate per test case---------------------------------------------------------------------------------------
 
-  result[nb > 0       ,    test.case.success.rate := round((1 - ((skipped + failed) / nb)) * 100, 1)]
-  result[nb == 0      ,    test.case.success.rate := 0]  # treat test cases without executed assertions (expectations) as no success
-  result[error == TRUE,    test.case.success.rate := 0]  # treat all errors as total failure
+  result[nb > 0       ,    TC.success.rate := round((1 - (failed / nb)) * 100, 1)]
+  result[nb == 0      ,    TC.success.rate := 0]  # treat test cases without executed assertions (expectations) as no success
+  result[error == TRUE,    TC.success.rate := 0]  # treat all errors as total failure
+  result[error == TRUE,    TC.success.rate := 0]  # treat all errors as total failure
 
+  # Background on skip*() in testthat (see the help):
+  #   "skip* functions are intended for use within test_that() blocks.
+  #   All expectations following the skip* statement within the same test_that block will be skipped.
+  #   Test summaries that report skip counts are reporting how many test_that blocks triggered a skip* statement,
+  #   not how many expectations were skipped." !!!
+  #
+  # -> Therefore no success rate is shown for skipped test cases
+  #    even though some assertions (expectations may have been checked)!
+  result[skipped == TRUE, TC.success.rate := NA]
 
 
   # Remove unneccessary columns -------------------------------------------------------------------------------------
@@ -80,11 +98,12 @@ enrich.raw.result <- function(result, DB.info) {
 
   # important columns first, header columns with static content at the end
   setcolorder(result, c("ID", "date", "test.group", "test.name",
-                              "test.case.result", "test.case.success.rate",
+                              "TC.result", "TC.success.rate",
                               "nb", "failed", "skipped", "error", "warning",
                               "user", "system", "real",
                               "DB.name", "DB.version",
                               "DBI.driver.pkg", "DBI.driver.pkg.version",
+                              "DBItest.pkg.version",
                               "client.R.version",
                               "client.OS.name", "client.OS.platform", "client.OS.version" ))
 

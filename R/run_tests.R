@@ -51,15 +51,15 @@ results.raw <- run_test_set(DBI.driver, con.args)
 results               <- new.env()
 
 results$res.raw       <- results.raw
-results$agg.per.group <- summarize.per.group.assert.count.based(results.raw)
-results$total.summary <- summarize.all.assert.count.based(results.raw)
+results$per.group.assert.result <- summarize.per.group.assert.count.based(results.raw)
+results$total.assert.summary <- summarize.all.assert.count.based(results.raw)
 results$total.test.case.summary <- summarize.all.testcase.count.based(results.raw)
 results$per.group.test.case.summary <- summarize.per.group.testcase.count.based(results.raw)
 
 
 
 file.name   <- make.results.file.name(results.raw, "xlsx", TRUE, "results")
-sheets.data <- list(Summary = results$agg.per.group, Details = results$res.raw)
+sheets.data <- list(Summary = results$per.group.test.case.summary, Details = results$res.raw)
 save.raw.results.as.xlsx(sheets.data, file.name)
 
 
