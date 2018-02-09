@@ -107,3 +107,77 @@ summarize.per.group.assert.count.based <- function(results) {
 }
 
 
+
+counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALSE) {
+
+  res <- results[, .(
+    granularity              = "Test Case Groups",
+    # TC.success.rate          = round(NROW(.SD[TC.result == "Passed",]) * 100 / .N, 2),
+    test.cases               = .N,
+    # passed.TCs               = NROW(.SD[TC.result == "Passed",]),
+    # failed.TCs               = NROW(.SD[TC.result == "Failed",]),
+    # skipped.TCs              = NROW(.SD[TC.result == "Skipped",]),
+    ##    test.cases.unkown.result = NROW(.SD[TC.result == "Unknown",]),  # should never happen so don't show it
+    checked.asserts          = sum(nb),
+    failed.asserts           = sum(failed),
+    skipped.asserts          = sum(skipped),
+    errors                   = sum(error),
+    warnings                 = sum(warning)
+  )
+  , by = .(date, test.group, TC.result)       # assuming all entries are for the same infrastructure for now...
+  ]
+
+
+
+  # add percentage of TC result per TC group + label for printing
+  res[, TC.pct       := test.cases / sum(test.cases) * 100, by = .(date, test.group)]
+  res[, TC.pct.label := paste0(sprintf("%.0f", TC.pct), " %")]
+
+
+
+  # add also one summary (for ggplot faceting to compare the summary with the test case results)
+  if (incl.totals) {
+    totals <- results[, .(
+      test.group               = "SUMMARY",
+      granularity              = "All",
+      # TC.success.rate          = round(NROW(.SD[TC.result == "Passed",]) * 100 / .N, 2),
+      test.cases               = .N,
+      # passed.TCs               = NROW(.SD[TC.result == "Passed",]),
+      # failed.TCs               = NROW(.SD[TC.result == "Failed",]),
+      # skipped.TCs              = NROW(.SD[TC.result == "Skipped",]),
+      ##    test.cases.unkown.result = NROW(.SD[TC.result == "Unknown",]),  # should never happen so don't show it
+      checked.asserts          = sum(nb),
+      failed.asserts           = sum(failed),
+      skipped.asserts          = sum(skipped),
+      errors                   = sum(error),
+      warnings                 = sum(warning)
+    )
+    , by = .(date, TC.result)
+    ]
+
+
+
+    # add percentage of TC result per TC group + label for printing
+    totals[granularity == "All", TC.pct       := test.cases / sum(test.cases) * 100, by = .(date)]
+    totals[granularity == "All", TC.pct.label := paste0(sprintf("%.0f", TC.pct), " %")]
+
+
+
+    res <- rbind(totals, res)
+
+  }  # end of "if (incl.totals)"
+
+
+
+  # support plot labels in the desired order (by using sorted factors)
+  res[, TC.result  := factor(TC.result, levels = c("Failed", "Skipped", "Passed"))]
+  res[, test.group := factor(test.group, levels = sort(unique(test.group), decreasing = TRUE))]
+
+
+  # Sort correct TC result order over all test groups to avoid wrong geom_text label values in ggplots
+  # Granularity "all" is "by accident" the first one and sorts the summary at the top
+  res <- res[order(granularity, test.group, -TC.result)]
+
+  return(res)
+
+}

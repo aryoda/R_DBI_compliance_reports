@@ -130,6 +130,33 @@ There are only three colors used to mark test result rates (percentages):
 
 ### Total summary
 
+```{r Total Summary, echo = FALSE, fig.align = 'left'}
+TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
+
+# https://stackoverflow.com/questions/10834382/ggplot2-keep-unused-levels-barplot
+# https://stackoverflow.com/questions/30739602/ggplot-reorder-stacked-bar-plot-based-on-values-in-data-frame
+# https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
+# https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
+d <- ggplot(test.case.groups.pivot.base, aes(x = test.group, y = TC.pct), fill = TC.result) +
+  geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
+  # number of test cases as label
+  # Important: Requires data rows in the same order as test.group factors to show the TC.pct in the correct bar!
+  #   Done before by sorting the data rows...
+  geom_text(aes(x = test.group, y = TC.pct, label = test.cases),
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
+  ylab("Weight in %") +
+  # now axis label (redundant to facet name)
+  xlab("") + # xlab("Test Case Group") +
+  # assign intuitive colors to stacked bars
+  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  coord_flip() +
+  ggtitle("Total and per test case group (test case weights and counts)") +
+  # Show total summary and details per test case group in two plots below each other
+  facet_grid( granularity ~ ., scales = "free_y", space = "free_y")
+d # show the plot
+```
+
+
 ```{r, echo = FALSE}
 # Total summary of the conformity test
 res.sum3 <- copy(total.test.case.summary)
@@ -140,10 +167,10 @@ res.sum3[, ':='(
                  total.TC.share = cell_spec(total.TC.share, "html", color = "white", bold = TRUE,
                                             background = derive.strings.HTML.color(TC.result)))
         ] %>%
-kable("html", escape = FALSE, caption = "based on test case count")  %>%
+kable("html", escape = FALSE, caption = "Summary based on test case counts")  %>%
 kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
 add_footnote(c("percentage of the test cases from the total number of test cases",
-               "BLUE color indicates partially or completely skipped test cases"), notation = "number") # related column header is still missing
+               "BLUE color indicates counts of partially or completely skipped test cases"), notation = "number") # related column header is still missing
 
 ```
 
@@ -156,14 +183,14 @@ res4 <- copy(per.group.test.case.summary)
 
 res4[, TC.success.rate := cell_spec(TC.success.rate, "html", color = "white", bold = TRUE,
                                              background = derive.pct.HTML.color(TC.success.rate))] %>%
-           kable("html", escape = FALSE, caption = "based on test case count")  %>%
+           kable("html", escape = FALSE, caption = "Summary based on test case counts")  %>%
            kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 
 ```
 
 
 
-## Checked assertions counts
+## Assertions counts
 
 The summaries in this chapter are based on the assertion granularity which is one level
 finer than the test case summary and gives an impression on how may problems contributed
@@ -187,7 +214,7 @@ res.sum2 = copy(per.group.assert.result)
 
 res.sum2[, asserts.success.rate := cell_spec(asserts.success.rate, "html", color = "white", bold = TRUE,
                                              background = derive.pct.HTML.color(asserts.success.rate))] %>%
-           kable("html", escape = FALSE, caption = "based on assertions count")  %>%
+           kable("html", escape = FALSE, caption = "Summary based on assertions counts")  %>%
            kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 
 ```

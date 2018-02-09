@@ -3,6 +3,8 @@
 #' This function is mainly used to assign an HTML color to a test case result but
 #' can be used for every other string values too.
 #'
+#' For a list of common HTML color codes see: \url{https://www.w3schools.com/colors/colors_hex.asp}
+#'
 #' @param strings        Character vector with the test case results
 #' @param string.colors  Character vector with named color codes
 #'                       (the names must match with the values in the \code{strings} argument
@@ -16,11 +18,11 @@
 #' derive.strings.HTML.color(c("hello", "new", "world"), string.colors = c("hello" = "green", "world" = "blue"), "yellow")
 #' # Result: "green" "yellow"   "blue"
 derive.strings.HTML.color <- function(strings,
-                                               string.colors = c(Failed = "red",
-                                                                 Unknown = "#E18700",
-                                                                 Passed = "#2dc937",
-                                                                 Skipped = "BLUE"),
-                                               others.color = "yellow") {
+                                      string.colors = c(Failed = "red",
+                                                        Unknown = "#E18700",
+                                                        Passed = "#2dc937",
+                                                        Skipped = "DodgerBlue"), # DodgerBlue = #1E90FF
+                                      others.color = "yellow") {
 
   # use upper case result names for more tolerant matching
   names(string.colors) <- stri_trans_toupper(names(string.colors))

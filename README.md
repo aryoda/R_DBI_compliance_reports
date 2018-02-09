@@ -5,7 +5,9 @@ This repository is intended as a collection of reports that compare how much dif
 The DBI conformity is checked by applying the unit tests of the package [`DBItest`][3].
 
 **For a first example of a result report see this [real-life report](https://htmlpreview.github.io/?https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/results/examples/example_result_report.html)
-and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on postgreSQL).**
+and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on [SQLite](https://www.sqlite.org/)).**
+
+<img src = "results/examples/example_result_summary.png" width = "600">
 
 
 
@@ -15,7 +17,7 @@ and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (
 
 Source: https://cran.r-project.org/web/packages/DBI/vignettes/DBI-proposal.html
 
-Just remember: DBI = (a common) Database interface
+**Just remember: DBI is a common database interface to access different databases via the same API.**
 
 
 
@@ -34,7 +36,8 @@ Just remember: DBI = (a common) Database interface
 Currently the first goal is the check the Microsoft SQL Server 2017 using the DBI-ODBC "bridge"
 provided by the [`odbc`][2] package.
 
-The work is still in progress based on postgreSQL on Linux (see [TODO list](TODO.md))...
+The work is still in progress based on the embedded database SQLite on Linux
+for easier development without a DB server (see [TODO list](TODO.md))...
 
 Last status update: Jan 28, 2018
 

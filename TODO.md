@@ -19,6 +19,8 @@
   of available test case (since the DBItest::test_* functions have a skip parameter that skips tests
   that are not counted as skipped in testthat => let testthat do the skip instead of skip the test within DBItest
   [see run_test() in run.R] to allow testthat a consistent report of all skipped tests)
+- add a better reporter for testthat that returns the most granular results
+  (e. g. one row per expectation + support for the number of skipped tests instead of a logical flag)
 - List known DBI driver packages in the readme (reverse dependency of CRAN may help but it ignores new packages at github...)
 - store results as CSV file to be read again for comparing the results of different set-ups
 - also check odbc:RODBC bridge driver to show differences in implementations (RODBCDBI::ODBC())
@@ -27,7 +29,9 @@
 - centralize used color scheme (color codes) to support changing it in one place (currently spreaded in the report)
 - rename testhat reporter column names in result.raw for consistent names in reports (no more renamings in reports)
 - result.raw: logical columns should be converted to Y/N (nicer in reports than true/false)
-
+- define terminology wiht DBItest team (e. g. test case, assertion, test platform, test run, test configuration)
+  and use it consistent allover the source code and reports
+  
 
 
 

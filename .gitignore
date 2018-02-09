@@ -45,3 +45,7 @@ results/20*.xlsx
 
 # test report during development
 results/result_report.html
+
+# personal files
+/testthat*.txt
+/ggplot_test*

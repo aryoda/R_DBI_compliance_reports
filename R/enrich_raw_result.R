@@ -93,11 +93,17 @@ enrich.raw.result <- function(result, DB.info) {
 
 
 
+  # Rename columns --------------------------------------------------------------------------------------------------
+
+  setnames(result, "test.name", "test.case.name")
+
+
+
   # Re-order the columns --------------------------------------------------------------------------------------------
 
 
   # important columns first, header columns with static content at the end
-  setcolorder(result, c("ID", "date", "test.group", "test.name",
+  setcolorder(result, c("ID", "date", "test.group", "test.case.name",
                               "TC.result", "TC.success.rate",
                               "nb", "failed", "skipped", "error", "warning",
                               "user", "system", "real",
