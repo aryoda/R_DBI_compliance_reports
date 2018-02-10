@@ -34,8 +34,21 @@
 - Test the package `rsqlserver` that uses `rClr` and the .Net namespace `System.Data.SqlClient`.
   This could be done using a Docker container:
   https://github.com/agstudy/rsqlserver
+- Add `RMariaDB` DBI package to the supported test configuration:
+  https://github.com/r-dbi/RMariaDB
+- Add all other "native" (non-ODBC) driver to the supported test configuration (e. g. google bigquery, RODBCDBI::ODBC()):
+  https://github.com/r-dbi
+- How about other NoSQL databases?
+  https://www.r-bloggers.com/database-interfaces/
 - Use R in a container to runt he conformity tests for a ready-to-use stable environment?
   E. g. similar to https://github.com/ruaridhw/dockerfiles/tree/master/rsqlserver/rstudio
+- rename project into "compliance" or "maturity"
+- Could a docker-enabled CI service support automatic updates of the reports?
+  https://yutani.rbind.io/post/2017-10-18-circleci/
+- Find a way to stop long running or blocking tests after a defined grace period
+  (e. g. caused by dead-locks or implementation problems with transactions)
+- Use LibreCalc or Excel file format to maintain the test configurations (R code is not really pretty)
+
   
   
 

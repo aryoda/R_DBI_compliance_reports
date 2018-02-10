@@ -1,4 +1,4 @@
-# DBI conformity reports for database access with R
+# Compliance and maturity reports for database access with R using the DBI interface
 
 This repository is intended as a collection of reports that compare how much different databases support DBI-based data access using the [programming language R][1].
 
@@ -17,6 +17,8 @@ and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (
 
 Source: https://cran.r-project.org/web/packages/DBI/vignettes/DBI-proposal.html
 
+You can find the full DBI specification at CRAN: https://cran.r-project.org/web/packages/DBI/vignettes/spec.html
+
 **Just remember: DBI is a common database interface to access different databases via the same API.**
 
 
@@ -33,13 +35,19 @@ Source: https://cran.r-project.org/web/packages/DBI/vignettes/DBI-proposal.html
 
 ## Current status
 
-Currently the first goal is the check the Microsoft SQL Server 2017 using the DBI-ODBC "bridge"
-provided by the [`odbc`][2] package.
+Last status update: Feb 10, 2018
 
 The work is still in progress based on the embedded database SQLite on Linux
 for easier development without a DB server (see [TODO list](TODO.md))...
 
-Last status update: Jan 28, 2018
+For a list of currently supported test configurations (database/driver combinations)
+see the test configuration file:
+
+https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/R/test_configs.R
+
+My (personal) goal is the check the Microsoft SQL Server 2017 using the DBI-ODBC "bridge"
+provided by the [`odbc`][2] package to identify more open issues to be solved in the `odbc` package
+(or the SQL server).
 
 
 
@@ -65,7 +73,7 @@ OK, to be realistic: I can't do this alone - so please contribute if you want th
 1. [Docker containerization platform](https://www.docker.com/)
 1. [Connection string syntax and examples for many database vendors](https://www.connectionstrings.com)
 1. [R driver packages that implement the DBI interface (see *Reverse depends*)](https://cran.r-project.org/web/packages/DBI/index.html)
-
+1. [DBI documentation from RStudio (containing a short history too)](https://db.rstudio.com/dbi/)
 
 
 [1]: https://www.r-project.org/

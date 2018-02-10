@@ -29,7 +29,7 @@ require(ggplot2)
 
 
 
-```{r, echo = FALSE, eval = FALSE}
+```{r old_code, echo = FALSE, eval = FALSE}
 # snippet disabled since it shows a stupid result
 # but collects helpful links at least
 
@@ -84,7 +84,7 @@ setup <- data.table(
 )
 
 setup %>% 
-  kable("html", escape = FALSE, caption = "based on test case count")  %>%
+  kable("html", escape = FALSE, caption = "")  %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) 
 
 ```
