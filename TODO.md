@@ -31,6 +31,12 @@
 - result.raw: logical columns should be converted to Y/N (nicer in reports than true/false)
 - define terminology wiht DBItest team (e. g. test case, assertion, test platform, test run, test configuration)
   and use it consistent allover the source code and reports
+- Test the package `rsqlserver` that uses `rClr` and the .Net namespace `System.Data.SqlClient`.
+  This could be done using a Docker container:
+  https://github.com/agstudy/rsqlserver
+- Use R in a container to runt he conformity tests for a ready-to-use stable environment?
+  E. g. similar to https://github.com/ruaridhw/dockerfiles/tree/master/rsqlserver/rstudio
+  
   
 
 
