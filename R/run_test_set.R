@@ -108,7 +108,7 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
 
 
 
-  enrich.raw.result(test.results, DB.info)
+  enrich.raw.result(test.results, DBI.driver, DB.info)
 
 
 

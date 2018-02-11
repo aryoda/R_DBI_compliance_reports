@@ -50,6 +50,16 @@ provided by the [`odbc`][2] package to identify more open issues to be solved in
 (or the SQL server).
 
 
+## How to run the tests
+
+1. Clone or download the repository
+1. Install the database drivers (native, ODBC...) on the client computer
+1. Install docker
+1. Prepare the required docker container by using the `install*` scripts in the sub folder `docker`
+1. Adjust the test configs files (TODO: Add more details here)
+1. Run the tests by executing `main.R`
+
+
 
 ## I have a dream...
 

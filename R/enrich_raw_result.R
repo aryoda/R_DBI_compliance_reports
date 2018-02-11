@@ -1,5 +1,5 @@
 # mainly to derive the final result per test case (= per row in the raw result)
-enrich.raw.result <- function(result, DB.info) {
+enrich.raw.result <- function(result, DBI.driver, DB.info) {
 
 
 

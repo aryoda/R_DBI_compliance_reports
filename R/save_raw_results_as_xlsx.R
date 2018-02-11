@@ -8,7 +8,7 @@
 #'
 #' @return A openxlsx workbook object to allow further manipulations of the created Excel file
 #'
-save.raw.results.as.xlsx <- function(sheets.data, file.name) {
+save.raw.results.as.xlsx <- function(sheets.data, file.name, output.folder = "results") {
 
   nb_sheets <- length(sheets.data)
 
@@ -16,8 +16,12 @@ save.raw.results.as.xlsx <- function(sheets.data, file.name) {
 
 
 
+  file.name.with.path <- file.path(output.folder, file.name)
+
+
+
   wb <- openxlsx::write.xlsx(sheets.data,
-                             file.name,
+                             file.name.with.path,
                              asTable     = rep(TRUE, nb_sheets),
                              # sheetName   = c("Summary", "Details"),
                              withFilter  = rep(TRUE, nb_sheets),

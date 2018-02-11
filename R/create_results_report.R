@@ -1,5 +1,10 @@
-create_results_report <- function(results, Rmd.file, output.folder) {
+create_results_report <- function(results, Rmd.file, output.file, output.folder = "") {
 
-  rmarkdown::render(Rmd.file, output_format = "all", output_dir = output.folder, envir = results)
+  res.file <- rmarkdown::render(Rmd.file, output_format = "all",
+                                output_file = output.file,
+                                output_dir = output.folder,
+                                envir = results)
+
+  return(res.file)
 
 }

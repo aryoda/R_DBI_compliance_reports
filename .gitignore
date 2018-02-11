@@ -42,9 +42,8 @@ vignettes/*.pdf
 
 # Ignore all generated test result Excel files
 results/20*.xlsx
-
-# test report during development
-results/result_report.html
+results/20*.html
+results/20*.csv
 
 # personal files
 /testthat*.txt
