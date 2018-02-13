@@ -1,10 +1,11 @@
-prepare.run.summarize.single.test <- function(test.config,
+perform.single.test <- function(test.config,
+                                              output.folder = "results",
                                               write.raw.results.as.Excel.file = TRUE,
                                               wait.secs.after.start.script = 15) {
 
   # initialize test run -------------------------------------------------------------------------------------------
 
-  con.args  <- key.value.string.as.list(test.config$con.args)
+  con.args.list  <- key.value.string.as.list(test.config$con.args)
 
   # attach driver library (if specified)
   if (!is.na(test.config$DBI.driver.pkg.name) & nchar(test.config$DBI.driver.pkg.name) > 0)
@@ -34,7 +35,7 @@ prepare.run.summarize.single.test <- function(test.config,
 
   # run single test -------------------------------------------------------------------------------------------------
 
-  results.raw <- run_test_set(DBI.driver, con.args)
+  results.raw <- run_test_set(DBI.driver, test.config, con.args.list)
 
 
 
@@ -54,33 +55,34 @@ prepare.run.summarize.single.test <- function(test.config,
 
   # create output ---------------------------------------------------------------------------------------------------
 
-  output.folder = "results"
-
-
-
   # Raw results as Excel file
   if (write.raw.results.as.Excel.file) {
-    file.name   <- make.raw.result.Excel.file.name(results.raw)
-    sheets.data <- list(Summary = results$per.group.test.case.summary, Details = results$res.raw)
-    save.raw.results.as.xlsx(sheets.data, file.name, output.folder)
+    Excel.file.name   <- make.raw.result.Excel.file.name(results.raw)
+    sheets.data       <- list(Summary = results$per.group.test.case.summary, Details = results$res.raw)
+    save.raw.results.as.xlsx(sheets.data, Excel.file.name, output.folder)
   }
 
 
   # Raw result as CSV file (for comparitive reports comparing different results)
-  file.name           <- make.raw.result.CSV.file.name(results.raw)
-  csv.file.name.with.path <- file.path(output.folder, file.name)
+  csv.file.name           <- make.raw.result.CSV.file.name(results.raw)
+  csv.file.name.with.path <- file.path(output.folder, csv.file.name)
   data.table::fwrite(results.raw, csv.file.name.with.path, sep = ";")
 
 
 
   # HTML result report
-  file.name   <- make.single.test.HTML.report.file.name(results.raw)
-  res.file <- create_results_report(results, "report_templates/result_report.Rmd", file.name, output.folder = output.folder)
+  report.file.name   <- make.single.test.HTML.report.file.name(results.raw)
+  res.file <- create.report(results,
+                            "report_templates/single_test_config_result_report.Rmd",
+                            report.file.name,
+                            output.folder = output.folder)
 
-  # print(paste("Generated report:", res.file))
 
 
+  res <- data.table(csv.file.name    = csv.file.name,
+                    Excel.file.name  = Excel.file.name,
+                    report.file.name = report.file.name)
 
-  return(csv.file.name.with.path)
+  return(res)
 
 }

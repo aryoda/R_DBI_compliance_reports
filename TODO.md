@@ -29,8 +29,12 @@
 - centralize used color scheme (color codes) to support changing it in one place (currently spreaded in the report)
 - rename testhat reporter column names in result.raw for consistent names in reports (no more renamings in reports)
 - result.raw: logical columns should be converted to Y/N (nicer in reports than true/false)
-- define terminology wiht DBItest team (e. g. test case, assertion, test platform, test run, test configuration)
-  and use it consistent allover the source code and reports
+- define terminology wiht DBItest team and use it consistent allover the source code and reports
+    + test case: A call of `testthat::test_that()`
+    + assertion: A call of `testthat::expect*()`
+    + test platform: The client-side R version, package version and operating system
+    + test configuration: A combination of a database, DBI driver and connection properties
+    + test run
 - Test the package `rsqlserver` that uses `rClr` and the .Net namespace `System.Data.SqlClient`.
   This could be done using a Docker container:
   https://github.com/agstudy/rsqlserver
@@ -47,7 +51,13 @@
   https://yutani.rbind.io/post/2017-10-18-circleci/
 - Find a way to stop long running or blocking tests after a defined grace period
   (e. g. caused by dead-locks or implementation problems with transactions)
-- Use LibreCalc or Excel file format to maintain the test configurations (R code is not really pretty)
+- Test runs on different client-side platforms and with different odbc drivers
+  must be considered, e. g.
+    + for a unique file name for results
+    + showing the odbc driver from the connection string - or the whole connection string without credentials
+    + in the comparative report by giving each test configuration a unique name
+  
+  
 
   
   
@@ -59,3 +69,4 @@
 + improve aggregation: count number of rows (= test_that test cases) instead of "nb" column (= number of expectations)?
 + log version numbers of R, odbc and DBItest
 + store results as Excel files too (e. g. using the package `openxlsx` or `writexl` to avoid the java dependency of `xlsx`)
++ Use LibreCalc or Excel file format to maintain the test configurations (R code is not really pretty)

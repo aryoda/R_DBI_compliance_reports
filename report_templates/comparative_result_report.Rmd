@@ -1,0 +1,106 @@
+---
+title: "DBI compliance test results - comparative report"
+author: "https://github.com/aryoda/R_DBI_DB_conformity_reports"
+date: '`r format(Sys.Date(), format = "%B %d, %Y")`'
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+---
+
+<style type="text/css">
+div#TOC li {
+    list-style:none;
+    background-image:none;
+    background-repeat:none;
+    background-position:0; 
+}
+</style>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(knitr)
+require(kableExtra)
+require(formattable)
+require(ggplot2)
+```
+
+
+
+
+
+
+
+# How to read the results
+
+## Test case vs. assertions
+
+The DBI conformity tests are done using the R package `DBItest` which uses the package `testthat` internally
+to execute the test cases.
+
+To test results in this report are based on a **per test case count**, where test case means:
+
+1. **Test case ("TC")**:      A call of the `testthat::test_that()` function
+
+Internally every test case has many assertions ("asserts")
+whereby an assertion is a call of an `testthat::expect*()` function.
+
+The **"per test case count"** gives a good overview which features are **completely** working as expected.
+
+
+
+## Semantics of the used colors
+
+There are only three colors used to mark test result rates (percentages):
+
+1. Green: Good or perfekt
+2. Orange: OK, but could be better
+3. Red: A severe problem
+4. Blue: Partially or completely skipped test cases
+
+
+
+# Summary of test results
+
+## Ranked by total compliance/maturity
+
+
+```{r Total Summary, echo = FALSE, fig.align = 'left'}
+TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
+
+# https://stackoverflow.com/questions/10834382/ggplot2-keep-unused-levels-barplot
+# https://stackoverflow.com/questions/30739602/ggplot-reorder-stacked-bar-plot-based-on-values-in-data-frame
+# https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
+# https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
+d <- ggplot(test.case.groups.pivot.base[granularity == "All"],
+  aes(x = test.group, y = TC.pct), fill = TC.result) +
+  geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
+  # number of test cases as label
+  # Important: Requires data rows in the same order as test.group factors to show the TC.pct in the correct bar!
+  #   Done before by sorting the data rows...
+  geom_text(aes(x = test.group, y = TC.pct, label = test.cases),
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
+  ylab("Weight in %") +
+  # now axis label (redundant to facet name)
+  xlab("") + # xlab("Test Case Group") +
+  # assign intuitive colors to stacked bars
+  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  coord_flip() +
+  ggtitle("Total and per test case group (test case weights and counts)") +
+  # Show total summary and details per test case group in two plots below each other
+  facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
+d # show the plot
+```
+
+
+
+## Ranking per database
+
+Compares different test configurations for the same database to show the best configuration.
+
+
+## Ranking per DBI driver
+
+Compares different test configurations for the same DBI driver to show the best configuration

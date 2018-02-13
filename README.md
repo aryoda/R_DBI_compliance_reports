@@ -56,8 +56,10 @@ provided by the [`odbc`][2] package to identify more open issues to be solved in
 1. Install the database drivers (native, ODBC...) on the client computer
 1. Install docker
 1. Prepare the required docker container by using the `install*` scripts in the sub folder `docker`
-1. Adjust the test configs files (TODO: Add more details here)
-1. Run the tests by executing `main.R`
+1. Adjust the test configuration file
+   [test_configs.xlsx](https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/test_configs.xlsx)
+   using LibreOffice Calc or Excel
+1. Run the tests by executing (sourcing) `main.R`
 
 
 

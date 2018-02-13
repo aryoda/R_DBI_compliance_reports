@@ -44,6 +44,8 @@ vignettes/*.pdf
 results/20*.xlsx
 results/20*.html
 results/20*.csv
+results/*.html
+results/*.csv
 
 # personal files
 /testthat*.txt

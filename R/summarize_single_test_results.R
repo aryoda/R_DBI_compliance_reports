@@ -124,7 +124,8 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
     errors                   = sum(error),
     warnings                 = sum(warning)
   )
-  , by = .(date, test.group, TC.result)       # assuming all entries are for the same infrastructure for now...
+  # assuming all entries are for the same infrastructure for now...
+  , by = .(date, DB.name, DB.version, DBI.driver.pkg, client.OS.name, test.group, TC.result)
   ]
 
 
@@ -152,7 +153,7 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
       errors                   = sum(error),
       warnings                 = sum(warning)
     )
-    , by = .(date, TC.result)
+    , by = .(date, DB.name, DB.version, DBI.driver.pkg, client.OS.name, TC.result)
     ]
 
 

@@ -1,8 +1,9 @@
 #' Run the test set for one single database connection
 #'
-#' @param DBI.driver Instance of a DBI driver
-#' @param con.args   List with connection settings as named elements (driver specific names)
-#' @param skip       Vector of DBItest test names to ignore (skip) as character vector. Used via %in% against test names.
+#' @param DBI.driver  Instance of a DBI driver
+#' @param test.config active test configuration (row from the config file)
+#' @param skip        Vector of DBItest test names to ignore (skip) as character vector. Used via %in% against test names.
+#' @param con.args.list
 #'
 #' @return           The test results as data.table
 #'
@@ -11,9 +12,9 @@
 #'   run_test_set( odbc::odbc(), list(dsn = "mysql_test_database"))
 #' }
 #'
-run_test_set <- function(DBI.driver, con.args, skip = NULL) {
+run_test_set <- function(DBI.driver, test.config, con.args.list, skip = NULL) {
 
-  DBItest::make_context(DBI.driver, connect_args = con.args)
+  DBItest::make_context(DBI.driver, connect_args = con.args.list)
 
 
 
@@ -107,8 +108,7 @@ run_test_set <- function(DBI.driver, con.args, skip = NULL) {
   setDT(test.results)
 
 
-
-  enrich.raw.result(test.results, DBI.driver, DB.info)
+  enrich.raw.result(test.results, test.config, con.args.list, DBI.driver, DB.info)
 
 
 

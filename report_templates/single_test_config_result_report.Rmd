@@ -1,5 +1,5 @@
 ---
-title: "DBI conformity test results"
+title: "DBI compliance test results for a single test configuration"
 author: "https://github.com/aryoda/R_DBI_DB_conformity_reports"
 date: '`r format(Sys.Date(), format = "%B %d, %Y")`'
 output: 
@@ -66,18 +66,24 @@ knitr::kable(total.assert.summary, "html", caption = "DBI conformity test summar
 
 # Test set-up
 
+The used test configuration is as follows:
+
 ```{r, echo = FALSE}
 # Overview over the set set-up (infrastructure, software versions etc.)
 setup <- data.table(
            Property = c("Testing date",
                         "DBItest package version",
                         "Database name", "Database version",
+                        "Database Connection string",
+                        "Client OS database driver",
                         "DBI driver package name", "DBI driver package version",
                         "R version",
                         "Client OS name", "Client OS platform", "Client OS version"),
            Value    = c(format(res.raw$date[1], format = "%B %d, %Y"),
                         res.raw$DBItest.pkg.version[1],
                         res.raw$DB.name[1], res.raw$DB.version[1],
+                        res.raw$DB.conn.string[1],
+                        res.raw$OS.driver.name[1],
                         res.raw$DBI.driver.pkg[1], res.raw$DBI.driver.pkg.version[1],
                         res.raw$client.R.version[1],
                         res.raw$client.OS.name[1], res.raw$client.OS.platform[1], res.raw$client.OS.version[1])
@@ -105,7 +111,7 @@ To understand the test results below you need to understand the meaning of two t
 
 The test summaries can be based on a "per test case count" or one level finer on a "per checked assertion count".
 
-The **"per test case count"** gives a good overview which features are working as expected.
+The **"per test case count"** gives a good overview which features are **completely** working as expected.
 
 The **per checked assertion count** indicates,
 
@@ -121,6 +127,7 @@ There are only three colors used to mark test result rates (percentages):
 1. Green: Good or perfekt
 2. Orange: OK, but could be better
 3. Red: A severe problem
+4. Blue: Partially or completely skipped test cases
 
 
 
@@ -150,7 +157,7 @@ d <- ggplot(test.case.groups.pivot.base, aes(x = test.group, y = TC.pct), fill =
   # assign intuitive colors to stacked bars
   scale_fill_manual(values = TC.result.colors, name = "TC result") +
   coord_flip() +
-  ggtitle("Total and per test case group (test case weights and counts)") +
+  ggtitle("Test case weights and counts (total and per test case group)") +
   # Show total summary and details per test case group in two plots below each other
   facet_grid( granularity ~ ., scales = "free_y", space = "free_y")
 d # show the plot

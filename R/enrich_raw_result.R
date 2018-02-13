@@ -1,5 +1,5 @@
 # mainly to derive the final result per test case (= per row in the raw result)
-enrich.raw.result <- function(result, DBI.driver, DB.info) {
+enrich.raw.result <- function(result, test.config, con.args.list, DBI.driver, DB.info) {
 
 
 
@@ -27,8 +27,21 @@ enrich.raw.result <- function(result, DBI.driver, DB.info) {
 
   # used database ---------------------------------------------------------------------------
 
-  result[, DB.name                := DB.info$dbms.name]
-  result[, DB.version             := DB.info$db.version]
+  result[, DB.name         := DB.info$dbms.name]
+  result[, DB.version      := DB.info$db.version]
+
+
+
+  result[, DB.conn.string  := build.connect.string(con.args.list, remove.credentials = TRUE)]
+
+
+
+  OS.driver.name   <- test.config$OS.driver.name
+
+  if (is.na(OS.driver.name))
+    OS.driver.name <- ""
+
+  result[, OS.driver.name  := OS.driver.name]
 
 
 
@@ -108,6 +121,8 @@ enrich.raw.result <- function(result, DBI.driver, DB.info) {
                               "nb", "failed", "skipped", "error", "warning",
                               "user", "system", "real",
                               "DB.name", "DB.version",
+                              "DB.conn.string",
+                              "OS.driver.name",
                               "DBI.driver.pkg", "DBI.driver.pkg.version",
                               "DBItest.pkg.version",
                               "client.R.version",
