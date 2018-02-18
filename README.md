@@ -1,17 +1,42 @@
-# Compliance and maturity reports for database access with R using the DBI interface
+---
+title: Compliance maturity reports for different databases accessed with R using the DBI interface
+output: 
+  html_document: 
+    number_sections: yes
+    toc: yes
+---
 
-This repository is intended as a collection of reports that compare how much different databases support DBI-based data access using the [programming language R][1].
 
-The DBI conformity is checked by applying the unit tests of the package [`DBItest`][3].
+# Scope
+
+This repository is intended as
+
+* a collection of reports
+* that compare how good different databases support DBI-based data access
+* using the [programming language R][1].
+
+The DBI compliance is checked by applying the unit tests of the package [`DBItest`][3].
+
+The source code to generate the reports is also included.
+
+
+
+# Example reports
 
 **For a first example of a result report see this [real-life report](https://htmlpreview.github.io/?https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/results/examples/example_result_report.html)
 and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on [SQLite](https://www.sqlite.org/)).**
+
+
+
+## Example summary: Database xy
+
+This diagram shows the comliance maturity of a database xy (total and per test case group):
 
 <img src = "results/examples/example_result_summary.png" width = "600">
 
 
 
-## `DBI` is...
+# `DBI` is...
 
 *"... a common interface between R/S and RDBMS that would allow users to access data stored on database servers in a uniform and predictable manner irrespective of the database engine. The interface defines a small set of classes and methods similar in spirit to Python’s DB-API, Java’s JDBC, Microsoft’s ODBC, Perl’s DBI, etc."*
 
@@ -23,7 +48,7 @@ You can find the full DBI specification at CRAN: https://cran.r-project.org/web/
 
 
 
-## Use cases of the reports
+# Use cases of the reports
 
 1. Decide if a DBI driver covers the requirements of a project for a specific database
 1. Compare the working features of different drivers for the same database (e. g. `odbc` vs. `RPostgreSQL` packages)
@@ -33,7 +58,7 @@ You can find the full DBI specification at CRAN: https://cran.r-project.org/web/
 
 
 
-## Current status
+# Current status
 
 Last status update: Feb 10, 2018
 
@@ -50,7 +75,7 @@ provided by the [`odbc`][2] package to identify more open issues to be solved in
 (or the SQL server).
 
 
-## How to run the tests
+# How to run the tests
 
 1. Clone or download the repository
 1. Install the database drivers (native, ODBC...) on the client computer
@@ -63,7 +88,7 @@ provided by the [`odbc`][2] package to identify more open issues to be solved in
 
 
 
-## I have a dream...
+# I have a dream...
 
 ... to provide **a central DBI-conformity database** that
 
@@ -76,7 +101,7 @@ OK, to be realistic: I can't do this alone - so please contribute if you want th
 
 
 
-## References
+# References
 
 1. [Programming language R](https://www.r-project.org/)
 1. [DBI package for R: Declares the formal DBI interface](https://github.com/r-dbi/DBI)
