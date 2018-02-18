@@ -1,14 +1,14 @@
-# Compliance maturity reports for different databases accessed with R using the DBI interface
+# DBI compliance maturity reports for different databases
 
 ## Scope
 
-This repository is intended as
+The [programming language R][1] offers a standardized interface to access many databases via a interface called DBI.
+
+This github repository is intended as
 
 * a collection of reports
-* that compare how good different databases support DBI-based data access
-* using the [programming language R][1].
-
-The DBI compliance is checked by applying the unit tests of the package [`DBItest`][3].
+* that visualize how good different databases support DBI-based database access
+* by measuring the DBI compliance with the unit tests of the package [`DBItest`][3].
 
 The source code to generate the reports is also included.
 
@@ -16,8 +16,10 @@ The source code to generate the reports is also included.
 
 ## Example reports
 
-**For a first example of a result report see this [real-life report](https://htmlpreview.github.io/?https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/results/examples/example_result_report.html)
+**For an example of a result report see this [first real-life report](https://htmlpreview.github.io/?https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/results/examples/example_result_report.html)
 and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on [SQLite](https://www.sqlite.org/)).**
+
+This is still pre-mature alpha status!
 
 
 
