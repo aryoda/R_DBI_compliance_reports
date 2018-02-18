@@ -1,4 +1,4 @@
-# DBI compliance maturity reports for different databases
+# DBI-compliance maturity reports for different databases
 
 ## Scope
 
@@ -17,13 +17,13 @@ The source code to generate the reports is also included.
 ## Example reports
 
 **For an example of a result report see this [first real-life report](https://htmlpreview.github.io/?https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/results/examples/example_result_report.html)
-and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (still based on [SQLite](https://www.sqlite.org/)).**
+and [the correspondig raw data](results/examples/example_result_raw_data.xlsx) (based on [SQLite](https://www.sqlite.org/)).**
 
-This is still pre-mature alpha status!
+This is still pre-mature alpha status. Don't draw any conclusions from this example!
 
 
 
-### Example summary: Database xy
+### Example: DBI-compliance summary for Database xy
 
 This diagram shows the comliance maturity of a database xy (total and per test case group):
 
@@ -33,13 +33,16 @@ This diagram shows the comliance maturity of a database xy (total and per test c
 
 ## `DBI` is...
 
-*"... a common interface between R/S and RDBMS that would allow users to access data stored on database servers in a uniform and predictable manner irrespective of the database engine. The interface defines a small set of classes and methods similar in spirit to Python’s DB-API, Java’s JDBC, Microsoft’s ODBC, Perl’s DBI, etc."*
+*"... a common interface between [the programming languages] R/S and RDBMS that would allow users to access data stored
+on database servers in a uniform and predictable manner irrespective of the database engine.
+The interface defines a small set of classes and methods similar in spirit to
+Python’s DB-API, Java’s JDBC, Microsoft’s ODBC, Perl’s DBI, etc."*
 
 Source: https://cran.r-project.org/web/packages/DBI/vignettes/DBI-proposal.html
 
 You can find the full DBI specification at CRAN: https://cran.r-project.org/web/packages/DBI/vignettes/spec.html
 
-**Just remember: DBI is a common database interface to access different databases via the same API.**
+**Just remember: DBI is a common database interface for R to access different databases via the same API.**
 
 
 
@@ -50,6 +53,7 @@ You can find the full DBI specification at CRAN: https://cran.r-project.org/web/
 1. Help developers of DBI drivers to find gaps and improve their drivers toward full DBI-conformity
 1. Help database vendors (their developers) to close gaps in the database engines required to be DBI-conform
    (e. g. for new big-data or noSQL databases)
+1. Find `DBItest` unit tests that are unrealistic to work with any database and improve them
 
 
 
@@ -80,6 +84,11 @@ provided by the [`odbc`][2] package to identify more open issues to be solved in
    [test_configs.xlsx](https://github.com/aryoda/R_DBI_DB_conformity_reports/blob/master/test_configs.xlsx)
    using LibreOffice Calc or Excel
 1. Run the tests by executing (sourcing) `main.R`
+1. See the results in the sub folder `results`
+     * Comparative_report.html
+     * one report as hmtl file per test configuration
+     * one Excel file containing the raw test results (for manual filtering and examination)
+     * one CSV file containing the raw test results (for automatic processing)
 
 
 
