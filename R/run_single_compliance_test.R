@@ -12,7 +12,7 @@
 #'   run_test_set( odbc::odbc(), list(dsn = "mysql_test_database"))
 #' }
 #'
-run_test_set <- function(DBI.driver, test.config, con.args.list, skip = NULL) {
+run.single.compliance.test <- function(DBI.driver, test.config, con.args.list, skip = NULL) {
 
   DBItest::make_context(DBI.driver, connect_args = con.args.list)
 
@@ -23,7 +23,7 @@ run_test_set <- function(DBI.driver, test.config, con.args.list, skip = NULL) {
   con <- DBItest:::connect(ctx)
   DB.info <- dbGetInfo(con)              # is working when using odbc package but:
   # Warning message: RSQLite::dbGetInfo() is deprecated: please use individual metadata functions instead
-  dbDisconnect(con)   # odbc::
+  dbDisconnect(con)
 
 
 

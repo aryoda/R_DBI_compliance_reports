@@ -111,6 +111,7 @@ summarize.per.group.assert.count.based <- function(results) {
 counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALSE) {
 
   res <- results[, .(
+    maturity.rank            = NA_integer_,                               # relevant only for totals
     granularity              = "Test Case Groups",
     # TC.success.rate          = round(NROW(.SD[TC.result == "Passed",]) * 100 / .N, 2),
     test.cases               = .N,
@@ -125,7 +126,7 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
     warnings                 = sum(warning)
   )
   # assuming all entries are for the same infrastructure for now...
-  , by = .(date, DB.name, DB.version, DBI.driver.pkg, client.OS.name, test.group, TC.result)
+  , by = .(date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.group, test.config.ID, TC.result)
   ]
 
 
@@ -153,14 +154,21 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
       errors                   = sum(error),
       warnings                 = sum(warning)
     )
-    , by = .(date, DB.name, DB.version, DBI.driver.pkg, client.OS.name, TC.result)
+    , by = .(date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.config.ID, TC.result)
     ]
 
 
 
     # add percentage of TC result per TC group + label for printing
-    totals[granularity == "All", TC.pct       := test.cases / sum(test.cases) * 100, by = .(date)]
+    totals[granularity == "All", TC.pct       := test.cases / sum(test.cases) * 100
+           , by = .(date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.config.ID)]
     totals[granularity == "All", TC.pct.label := paste0(sprintf("%.0f", TC.pct), " %")]
+
+
+
+    # Set maturity rank for all total results (best results first)
+    rank <- totals[granularity == "All" & TC.result == "Passed"][order(-TC.pct), .(test.config.ID, granularity, maturity.rank = .I)]
+    totals[rank, maturity.rank := i.maturity.rank, on = .(test.config.ID, granularity)]
 
 
 
@@ -170,14 +178,29 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
 
 
 
-  # support plot labels in the desired order (by using sorted factors)
+  # Create test configuration plot labels
+  res[, test.config.DB.label     := paste(DB.name, DB.version)]
+  res[, test.config.driver.label := paste(DBI.driver.pkg, DBI.driver.pkg.version)]
+  res[!is.na(OS.driver.name),
+        test.config.driver.label := paste0(test.config.driver.label, " (", OS.driver.name, ")")]
+  # client.OS.name is used to separate comparative results (e. g. in separate ggplot2 facets)
+  # so there is no need to add it to the test config label for now
+  # res[, test.config.label        := paste(test.config.DB.label, test.config.driver.label, client.OS.name, sep = "\n")]
+  res[, test.config.label        := paste(test.config.DB.label, test.config.driver.label, sep = "\n")]
+
+
+
+  # Create ordered plot labels (by using sorted factors)
   res[, TC.result  := factor(TC.result, levels = c("Failed", "Skipped", "Passed"))]
   res[, test.group := factor(test.group, levels = sort(unique(test.group), decreasing = TRUE))]
+
 
 
   # Sort correct TC result order over all test groups to avoid wrong geom_text label values in ggplots
   # Granularity "all" is "by accident" the first one and sorts the summary at the top
   res <- res[order(granularity, test.group, -TC.result)]
+
+
 
   return(res)
 

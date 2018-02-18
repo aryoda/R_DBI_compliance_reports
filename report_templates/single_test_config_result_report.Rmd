@@ -1,6 +1,6 @@
 ---
 title: "DBI compliance test results for a single test configuration"
-author: "https://github.com/aryoda/R_DBI_DB_conformity_reports"
+author: "https://github.com/aryoda/R_DBI_compliance_reports"
 date: '`r format(Sys.Date(), format = "%B %d, %Y")`'
 output: 
   html_document: 
@@ -52,7 +52,7 @@ require(ggplot2)
 #
 # formattable seems to be very strong:
 # https://ropensci.org/blog/2017/06/27/packagemetrics/
-knitr::kable(total.assert.summary, "html", caption = "DBI conformity test summary (based on assertion counts)")  %>%
+knitr::kable(total.assert.summary, "html", caption = "DBI compliance test summary (based on assertion counts)")  %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
   column_spec(3, background = derive.pct.HTML.color(total.assert.summary$success.rate.asserts), color = "white", bold = TRUE)
 
@@ -66,7 +66,7 @@ knitr::kable(total.assert.summary, "html", caption = "DBI conformity test summar
 
 # Test set-up
 
-The used test configuration is as follows:
+The used test configuration and testing environment is as follows:
 
 ```{r, echo = FALSE}
 # Overview over the set set-up (infrastructure, software versions etc.)
@@ -101,7 +101,7 @@ setup %>%
 
 ## Test case vs. assertions
 
-The DBI conformity tests are done using the R package `DBItest` which uses the package `testthat` internally
+The DBI compliance tests are done using the R package `DBItest` which uses the package `testthat` internally
 to execute the test cases.
 
 To understand the test results below you need to understand the meaning of two terms:
@@ -151,6 +151,7 @@ d <- ggplot(test.case.groups.pivot.base, aes(x = test.group, y = TC.pct), fill =
   #   Done before by sorting the data rows...
   geom_text(aes(x = test.group, y = TC.pct, label = test.cases),
             position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
   ylab("Weight in %") +
   # now axis label (redundant to facet name)
   xlab("") + # xlab("Test Case Group") +
@@ -165,7 +166,7 @@ d # show the plot
 
 
 ```{r, echo = FALSE}
-# Total summary of the conformity test
+# Total summary of the compliance test
 res.sum3 <- copy(total.test.case.summary)
 
 res.sum3[, ':='(
@@ -240,7 +241,8 @@ This section shall help you to
    (e. g. to debug it as developer)
 
 ```{r, echo = FALSE}
-details <- copy(res.raw[TC.result == "Failed", c(1, 3:11)]) [order(-error, TC.success.rate)]
+# TODO: Use col names instead of indices (causes pain when inserting new columns!)
+details <- copy(res.raw[TC.result == "Failed", c(1, 4:12)]) [order(-error, TC.success.rate)]
 
 fnm <- footnote_marker_number(1, "html")
 new.col.names <- paste0(c("checked.asserts", "failed"), fnm)
@@ -261,7 +263,7 @@ add_footnote(c("based on counted assertions"), notation = "number")
 
 ## List of (partially or completly) skipped test cases
 
-This table shows the **blind spots** in the DBI conformity tests since not all assertions in the test cases
+This table shows the **blind spots** in the DBI compliance tests since not all assertions in the test cases
 have been checked.
 
 **Note:**
@@ -277,7 +279,9 @@ have been checked)!
 
 
 ```{r, echo = FALSE}
-details <- copy(res.raw[TC.result == "Skipped", c(1, 3:8, 11)]) [order(TC.success.rate)]
+# TODO: Use col names instead of indices (causes pain when inserting new columns!)
+# "ID" "test.group" "test.case.name" "TC.result" "TC.success.rate" "nb" "failed" "warning" 
+details <- copy(res.raw[TC.result == "Skipped", c(1, 4:9, 12)]) [order(TC.success.rate)]
 
 fnm <- footnote_marker_number(1, "html")
 new.col.names <- paste0(c("checked.asserts", "failed"), fnm)
@@ -298,7 +302,8 @@ This section shows the most granular test results: Per test case.
 
 
 ```{r, echo = FALSE}
-full.details <- copy(res.raw[, c(1, 3:11)])
+# TODO: Use col names instead of indices (causes pain when inserting new columns!)
+full.details <- copy(res.raw[, c(1, 4:12)])
 
 fnm <- footnote_marker_number(1, "html")
 new.col.names <- paste0(c("checked.asserts", "failed"), fnm)

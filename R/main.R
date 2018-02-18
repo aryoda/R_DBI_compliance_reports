@@ -24,7 +24,7 @@ library(kableExtra)   # install.packages("kableExtra")
 
 
 source("R/get_test_configurations.R")
-source("R/run_test_set.R")
+source("R/run_single_compliance_test.R")
 source("R/enrich_raw_result.R")
 source("R/summarize_single_test_results.R")
 source("R/make_results_file_name.R")
@@ -33,7 +33,7 @@ source("R/derive_pct_HTML_color.R")
 source("R/derive_strings_HTML_color.R")
 source("R/add_test_config_row.R")
 source("R/key_value_string_as_list.R")
-source("R/perform_single_test.R")
+source("R/check_test_config_compliance.R")
 source("R/create_report.R")
 source("R/summarize_comparative_results.R")
 source("R/build_connect_string.R")
@@ -79,7 +79,7 @@ for (i in 1:NROW(active.test.configs)) {
 
   test.config <- active.test.configs[i, ]
 
-  result.files <- perform.single.test(test.config, output.folder)
+  result.files <- check.test.config.compliance(test.config, output.folder)
 
   raw.result.files <- rbind(raw.result.files, result.files)
 
@@ -94,10 +94,10 @@ for (i in 1:NROW(active.test.configs)) {
 # (Much :-) TODO
 
 data  <- collect.comparative.test.results(output.folder,
-                                          raw.result.files$csv.file.name,
-                                          "2018-02-13_odbc_MySQL_5.7.21_Ubuntu.14.04.5.LTS.csv") # test data!
+                                          raw.result.files$csv.file.name)
+                                          # , "2018-02-13_odbc_MySQL_5.7.21_Ubuntu.14.04.5.LTS.csv") # test data!
 
-results               <- new.env()
+results <- new.env()
 
 results$res.raw                     <- data
 results$test.case.groups.pivot.base <- counts.per.test.case.group.as.pivot.base(data, incl.totals = TRUE)
@@ -111,4 +111,5 @@ res.file <- create.report(results,
                           report.file.name,
                           output.folder = output.folder)
 
+browseURL(file.path(output.folder, report.file.name))
 

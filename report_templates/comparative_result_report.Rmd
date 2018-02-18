@@ -63,33 +63,42 @@ There are only three colors used to mark test result rates (percentages):
 
 # Summary of test results
 
-## Ranked by total compliance/maturity
+All test results in this report are based on a **per test case count** (if not otherwise stated).
 
 
-```{r Total Summary, echo = FALSE, fig.align = 'left'}
+
+## Ranked by total DBI-compliance
+
+
+```{r Total Summary, echo = FALSE, fig.align = 'left', out.width=800}
 TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
 
-# https://stackoverflow.com/questions/10834382/ggplot2-keep-unused-levels-barplot
-# https://stackoverflow.com/questions/30739602/ggplot-reorder-stacked-bar-plot-based-on-values-in-data-frame
-# https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
-# https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
-d <- ggplot(test.case.groups.pivot.base[granularity == "All"],
-  aes(x = test.group, y = TC.pct), fill = TC.result) +
+# To order by the maturity rank (= best results first) the sorted factor is required
+data <- test.case.groups.pivot.base[granularity == "All"][order(-maturity.rank)] # reverse sort to show best result on top (coord_flip!)
+data[, test.config.label := factor(test.config.label, levels = unique(test.config.label))]
+
+d <- ggplot(data,
+  aes(x = test.config.label, y = TC.pct), fill = TC.result) +
   geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
+  # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 10) + # does not work
   # number of test cases as label
   # Important: Requires data rows in the same order as test.group factors to show the TC.pct in the correct bar!
   #   Done before by sorting the data rows...
-  geom_text(aes(x = test.group, y = TC.pct, label = test.cases),
+  geom_text(aes(x = test.config.label, y = TC.pct, label = test.cases),
             position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
-  ylab("Weight in %") +
+  ylab("Test case weights (in %) and counts") +
   # now axis label (redundant to facet name)
   xlab("") + # xlab("Test Case Group") +
   # assign intuitive colors to stacked bars
   scale_fill_manual(values = TC.result.colors, name = "TC result") +
   coord_flip() +
-  ggtitle("Total and per test case group (test case weights and counts)") +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  # scale_y_continuous(labels = scales::percent) +  # percent labels
+  ggtitle("Total result ranked by DBI-compliance") +
+  theme(plot.title = element_text(size = 12)) +     # ggtitle font size
   # Show total summary and details per test case group in two plots below each other
-  facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  # facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  facet_grid(client.OS.name ~ ., scales = "free_y", space = "free_y")
   # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
 d # show the plot
 ```
@@ -100,7 +109,85 @@ d # show the plot
 
 Compares different test configurations for the same database to show the best configuration.
 
+```{r Total Summary per DBMS, echo = FALSE, fig.align = 'left', out.width=800}
+TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
+
+# To order by the maturity rank (= best results first) the sorted factor is required
+data <- test.case.groups.pivot.base[granularity == "All"][order(-maturity.rank)] # reverse sort to show best result on top (coord_flip!)
+data[, test.config.label := factor(test.config.label, levels = unique(test.config.label))]
+
+d <- ggplot(data,
+  aes(x = test.config.label, y = TC.pct), fill = TC.result) +
+  geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
+  # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 10) + # does not work
+  # number of test cases as label
+  # Important: Requires data rows in the same order as test.group factors to show the TC.pct in the correct bar!
+  #   Done before by sorting the data rows...
+  geom_text(aes(x = test.config.label, y = TC.pct, label = test.cases),
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
+  ylab("Test case weights (in %) and counts") +
+  # now axis label (redundant to facet name)
+  xlab("") + # xlab("Test Case Group") +
+  # assign intuitive colors to stacked bars
+  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  # scale_y_continuous(labels = scales::percent) +  # percent labels
+  ggtitle("Total result per DBMS ranked by DBI-compliance") +
+  theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  # Show total summary and details per test case group in two plots below each other
+  # facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  facet_grid(client.OS.name + DB.name ~ ., scales = "free_y", space = "free_y")
+  # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
+d # show the plot
+```
+
 
 ## Ranking per DBI driver
 
 Compares different test configurations for the same DBI driver to show the best configuration
+
+```{r Total Summary per DBI driver, echo = FALSE, fig.align = 'left', out.width=800}
+TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
+
+# To order by the maturity rank (= best results first) the sorted factor is required
+data <- test.case.groups.pivot.base[granularity == "All"][order(-maturity.rank)] # reverse sort to show best result on top (coord_flip!)
+data[, test.config.label := factor(test.config.label, levels = unique(test.config.label))]
+
+d <- ggplot(data,
+  aes(x = test.config.label, y = TC.pct), fill = TC.result) +
+  geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
+  # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 10) + # does not work
+  # number of test cases as label
+  # Important: Requires data rows in the same order as test.group factors to show the TC.pct in the correct bar!
+  #   Done before by sorting the data rows...
+  geom_text(aes(x = test.config.label, y = TC.pct, label = test.cases),
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
+  ylab("Test case weights (in %) and counts") +
+  # now axis label (redundant to facet name)
+  xlab("") + # xlab("Test Case Group") +
+  # assign intuitive colors to stacked bars
+  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  # scale_y_continuous(labels = scales::percent) +  # percent labels
+  ggtitle("Total result per DBI driver package ranked by DBI compliance") +
+  theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  # Show total summary and details per test case group in two plots below each other
+  # facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  facet_grid(client.OS.name + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
+d # show the plot
+```
+
+
+
+# Test results per test configuration
+
+For detailled results per test configuration click on the corresponding link:
+
+TODO
+
+# Test results per test case group
+
+TODO Compare test case groups over all test configs, per DBMS and per DBI driver

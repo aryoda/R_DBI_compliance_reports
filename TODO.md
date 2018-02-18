@@ -29,12 +29,13 @@
 - centralize used color scheme (color codes) to support changing it in one place (currently spreaded in the report)
 - rename testhat reporter column names in result.raw for consistent names in reports (no more renamings in reports)
 - result.raw: logical columns should be converted to Y/N (nicer in reports than true/false)
-- define terminology wiht DBItest team and use it consistent allover the source code and reports
+- define terminology with DBItest team and use it consistent allover the source code and reports
     + test case: A call of `testthat::test_that()`
     + assertion: A call of `testthat::expect*()`
-    + test platform: The client-side R version, package version and operating system
-    + test configuration: A combination of a database, DBI driver and connection properties
+    + test environment (or: platform?): The client-side operating system, R version and package versions
+    + test configuration: A combination of a database, DBI driver and connection properties (the DB-Server OS is ignored here!)
     + test run
+    + maturity = level of DBI compliance
 - Test the package `rsqlserver` that uses `rClr` and the .Net namespace `System.Data.SqlClient`.
   This could be done using a Docker container:
   https://github.com/agstudy/rsqlserver
@@ -56,7 +57,9 @@
     + for a unique file name for results
     + showing the odbc driver from the connection string - or the whole connection string without credentials
     + in the comparative report by giving each test configuration a unique name
-  
+- translation of internal database version numbers into "public" versions (e. g. postgresql 100001 = version 10.x)
+- Normale DBMS names (column "DB.name") for consistent grouping per DBMS in comparative reports
+- replace data.table column indices with column names in the single test config report
   
 
   

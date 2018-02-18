@@ -1,4 +1,4 @@
-perform.single.test <- function(test.config,
+check.test.config.compliance <- function(test.config,
                                               output.folder = "results",
                                               write.raw.results.as.Excel.file = TRUE,
                                               wait.secs.after.start.script = 15) {
@@ -35,7 +35,7 @@ perform.single.test <- function(test.config,
 
   # run single test -------------------------------------------------------------------------------------------------
 
-  results.raw <- run_test_set(DBI.driver, test.config, con.args.list)
+  results.raw <- run.single.compliance.test(DBI.driver, test.config, con.args.list)
 
 
 

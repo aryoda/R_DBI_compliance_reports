@@ -3,10 +3,11 @@ enrich.raw.result <- function(result, test.config, con.args.list, DBI.driver, DB
 
 
 
-  # Primary key -----------------------------------------------------------------------------------------------
+  # Keys --------------------------------------------------------------------------------------------------
 
-  result[, ID                     := 1:NROW(result)]
-  result[, date                   := Sys.Date()]    # date of testing (uses the current time zone)
+  result[, ID             := 1:NROW(result)]
+  result[, date           := Sys.Date()]    # date of testing (uses the current time zone)
+  result[, test.config.ID := 1]             # the result of a single test (will be made unique in comparative results)
 
 
 
@@ -116,7 +117,8 @@ enrich.raw.result <- function(result, test.config, con.args.list, DBI.driver, DB
 
 
   # important columns first, header columns with static content at the end
-  setcolorder(result, c("ID", "date", "test.group", "test.case.name",
+  setcolorder(result, c("ID", "test.config.ID", "date",
+                              "test.group", "test.case.name",
                               "TC.result", "TC.success.rate",
                               "nb", "failed", "skipped", "error", "warning",
                               "user", "system", "real",

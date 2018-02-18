@@ -2,7 +2,8 @@
 
 ## Scope
 
-The [programming language R][1] offers a standardized interface to access many databases via a interface called DBI.
+The [programming language R][1] offers a standardized interface to access many databases via a interface called
+[DBI](https://cran.r-project.org/web/packages/DBI/vignettes/spec.html).
 
 This github repository is intended as
 

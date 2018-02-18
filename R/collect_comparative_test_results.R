@@ -30,8 +30,11 @@ collect.comparative.test.results <- function(output.folder, result.file.list, ex
 
   data <- list()
 
-  for(i in seq_along(file.list))
-      data[[result.file.list[i]]] = fread(file.path(output.folder, file.list[i]), sep = ";")
+  for(i in seq_along(file.list)) {
+    test.config.data = fread(file.path(output.folder, file.list[i]), sep = ";")
+    test.config.data[, test.config.ID := i]    # add a unique ID to ease data aggregation later
+    data[[result.file.list[i]]] = test.config.data
+  }
 
 
 
