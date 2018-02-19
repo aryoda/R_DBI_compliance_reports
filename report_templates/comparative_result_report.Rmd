@@ -1,6 +1,6 @@
 ---
 title: "DBI compliance test results - comparative report"
-author: "https://github.com/aryoda/R_DBI_DB_conformity_reports"
+author: "https://github.com/aryoda/R_DBI_compliance_reports"
 date: '`r format(Sys.Date(), format = "%B %d, %Y")`'
 output: 
   html_document: 

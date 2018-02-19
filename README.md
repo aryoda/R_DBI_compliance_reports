@@ -1,8 +1,8 @@
-# DBI-compliance maturity reports for different databases
+# DBI-compliance reports for different databases
 
 ## Scope
 
-The [programming language R][1] offers a standardized interface to access many databases via a interface called
+The [programming language R][1] offers a standardized interface to access many different database systems via an interface called
 [DBI](https://cran.r-project.org/web/packages/DBI/vignettes/spec.html).
 
 This github repository is intended as
@@ -11,7 +11,7 @@ This github repository is intended as
 * that visualize how good different databases support DBI-based database access
 * by measuring the DBI compliance with the unit tests of the package [`DBItest`][3].
 
-The source code to generate the reports is also included.
+The source code to generate the reports is also included in this repository (not separated).
 
 
 
