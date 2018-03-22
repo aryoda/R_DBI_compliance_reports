@@ -9,12 +9,14 @@
 #'                                  from the current (last) run of different test configurations
 #' @param external.result.file.list Optional: Character vector with the file names containing single test results
 #'                                  created on another machine (or same machine but in the past).
+#' @param normalize.legacy.names    Normalize names (like DBMS names) that have not been normalized
+#'                                  when the results were saved
 #'
-#' @return
+#' @return                          all raw test results in one single data.table
 #' @export
 #'
 #' @examples
-collect.comparative.test.results <- function(output.folder, result.file.list, external.result.file.list = NULL) {
+collect.comparative.test.results <- function(output.folder, result.file.list, external.result.file.list = NULL, normalize.legacy.names = TRUE) {
 
   stopifnot("character" == class(result.file.list))
   stopifnot(is.null(external.result.file.list) | "character" == class(external.result.file.list))
@@ -24,21 +26,32 @@ collect.comparative.test.results <- function(output.folder, result.file.list, ex
 
   file.list <- c(result.file.list, external.result.file.list)
 
-  stopifnot(anyDuplicated(file.list) == 0)
+  stopifnot(anyDuplicated(file.list) == 0)    # duplicated file names are not allowed (would cause wrong results)
 
 
 
   data <- list()
 
   for(i in seq_along(file.list)) {
-    test.config.data = fread(file.path(output.folder, file.list[i]), sep = ";")
+    test.config.data = fread(file.path(output.folder, file.list[i]),
+                             sep = ";",
+                             stringsAsFactors = FALSE,
+                             colClasses = c(OS.driver.name = "character"),   # default class would be int (causing NAs for emtpy values)
+                             na.strings = NULL)                              # no NAs in character columns
     test.config.data[, test.config.ID := i]    # add a unique ID to ease data aggregation later
-    data[[result.file.list[i]]] = test.config.data
+    data[[i]] = test.config.data
   }
 
 
 
   res <- rbindlist(data, use.names = TRUE)
+
+
+
+  # Fix legacy non-normalized names
+  if (normalize.legacy.names) {
+    res[, DB.name         := normalize.DBMS.names(DB.name, DB.version)]
+  }
 
 
 

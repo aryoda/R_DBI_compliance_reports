@@ -74,31 +74,34 @@ run.single.compliance.test <- function(DBI.driver, test.config, con.args.list, s
   # DBItest::test_all(skip = c("test name sub string"))
   #
   # skip well known transaction test cases that use rollback:
-  skip.for.sure = c("with_transaction_error_nested", "with_transaction_failure",
-                    "begin_rollback", "begin_write_rollback", "begin_commit_return_value", "begin_rollback_return_value",
-                    "begin_rollback", "begin_write_rollback")
-  skip.maybe    = c("begin_commit_closed",
-                    "begin_commit_invalid",
-                    "rollback_without_begin",
-                    "begin_begin",
-                    "begin_commit",
-                    "begin_write_commit",
-                    "begin_rollback",
-                    "begin_write_rollback")
-  skip = c(skip.for.sure, skip.maybe)
+  #
+  # March 22, 2018: Disabled, since the bug in the package "odbc" has been fixed and transaction tests do work now
+  # skip.for.sure = c("with_transaction_error_nested", "with_transaction_failure",
+  #                   "begin_rollback", "begin_write_rollback", "begin_commit_return_value", "begin_rollback_return_value",
+  #                   "begin_rollback", "begin_write_rollback")
+  # skip.maybe    = c("begin_commit_closed",
+  #                   "begin_commit_invalid",
+  #                   "rollback_without_begin",
+  #                   "begin_begin",
+  #                   "begin_commit",
+  #                   "begin_write_commit",
+  #                   "begin_rollback",
+  #                   "begin_write_rollback")
+  # skip = c(skip.for.sure, skip.maybe)
 
-  # Work-around: Execute working tests manually (functions are from DBItest)
-  #   Alternative: add blocking tests via the "skip" parameter
-  test_getting_started()
-  test_driver()
-  test_connection()
-  test_result()
-  test_sql()
-  test_meta()
-  # if (!"odbc" %in% class(DBI.driver))  # postgres with RPostgres throws errors :-(
-  #  test_transaction()  # hangs with odbc package, so do the test only for other drivers (https://github.com/r-dbi/odbc/issues/138)
-  # test_transaction(skip = skip)  # shouldn't hang if used with odbc package (hopefully on every platform)
-  test_compliance()
+  DBItest::test_all()
+  # # Work-around: Execute working tests manually (functions are from DBItest)
+  # #   Alternative: add blocking tests via the "skip" parameter
+  # test_getting_started()
+  # test_driver()
+  # test_connection()
+  # test_result()
+  # test_sql()
+  # test_meta()
+  # # if (!"odbc" %in% class(DBI.driver))  # postgres with RPostgres throws errors :-(
+  # test_transaction()  # hangs with odbc package, so do the test only for other drivers (https://github.com/r-dbi/odbc/issues/138)
+  # # test_transaction(skip = skip)  # shouldn't hang if used with odbc package (hopefully on every platform)
+  # test_compliance()
 
 
 

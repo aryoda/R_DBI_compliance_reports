@@ -1,4 +1,4 @@
-# DBI-compliance reports for different databases
+# DBI-compliance reports for different database systems
 
 ## Scope
 
@@ -50,7 +50,8 @@ You can find the full DBI specification at CRAN: https://cran.r-project.org/web/
 ## Use cases of the reports
 
 1. Decide if a DBI driver covers the requirements of a project for a specific database
-1. Compare the working features of different drivers for the same database (e. g. `odbc` vs. `RPostgreSQL` packages)
+1. Estimate the impact of different configurations for the same database (e. g. using the `odbc` vs. `RPostgreSQL` packages)
+   to identify the best configuration for your project
 1. Help developers of DBI drivers to find gaps and improve their drivers toward full DBI-conformity
 1. Help database vendors (their developers) to close gaps in the database engines required to be DBI-conform
    (e. g. for new big-data or noSQL databases)

@@ -126,7 +126,7 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
     warnings                 = sum(warning)
   )
   # assuming all entries are for the same infrastructure for now...
-  , by = .(date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.group, test.config.ID, TC.result)
+  , by = .(test.config.ID, date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.group, test.config.ID, TC.result)
   ]
 
 
@@ -154,7 +154,7 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
       errors                   = sum(error),
       warnings                 = sum(warning)
     )
-    , by = .(date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.config.ID, TC.result)
+    , by = .(test.config.ID, date, DB.name, DB.version, DBI.driver.pkg, DBI.driver.pkg.version, OS.driver.name, client.OS.name, test.config.ID, TC.result)
     ]
 
 
@@ -179,14 +179,20 @@ counts.per.test.case.group.as.pivot.base <- function(results, incl.totals = FALS
 
 
   # Create test configuration plot labels
+  res[, client.OS.name.generic   := stri_extract_first_words(client.OS.name)]   # only first word
+
   res[, test.config.DB.label     := paste(DB.name, DB.version)]
+
   res[, test.config.driver.label := paste(DBI.driver.pkg, DBI.driver.pkg.version)]
-  res[!is.na(OS.driver.name),
+  res[!is.na(OS.driver.name) & !OS.driver.name == "",
         test.config.driver.label := paste0(test.config.driver.label, " (", OS.driver.name, ")")]
   # client.OS.name is used to separate comparative results (e. g. in separate ggplot2 facets)
   # so there is no need to add it to the test config label for now
   # res[, test.config.label        := paste(test.config.DB.label, test.config.driver.label, client.OS.name, sep = "\n")]
-  res[, test.config.label        := paste(test.config.DB.label, test.config.driver.label, sep = "\n")]
+
+  res[, test.config.label        := paste(paste0(test.config.ID, " - ", test.config.DB.label),
+                                          test.config.driver.label, sep = "\n")]
+
 
 
 

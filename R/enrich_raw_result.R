@@ -28,7 +28,7 @@ enrich.raw.result <- function(result, test.config, con.args.list, DBI.driver, DB
 
   # used database ---------------------------------------------------------------------------
 
-  result[, DB.name         := DB.info$dbms.name]
+  result[, DB.name         := normalize.DBMS.names(DB.info$dbms.name, DB.info$db.version)]
   result[, DB.version      := DB.info$db.version]
 
 

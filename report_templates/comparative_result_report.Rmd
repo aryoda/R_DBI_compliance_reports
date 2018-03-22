@@ -18,7 +18,7 @@ div#TOC li {
 </style>
 
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 require(knitr)
 require(kableExtra)
@@ -28,7 +28,70 @@ require(ggplot2)
 
 
 
+```{r ggplot themes, echo = FALSE}
 
+# resusable theme for consistent ggplot layouts in this report
+# (and easy to change - just here in one place)
+report_theme <- function() {
+  theme(plot.title = element_text(size = 10),
+        axis.text = element_text(size = 8),
+        strip.text = element_text(size = 8),
+        axis.title = element_text(size = 8),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.position = "bottom")
+}
+```
+
+
+
+```{r ggplot_helper, echo = FALSE}
+
+# ggplot label formatter function (see ?ggplot2::labellers and ?ggplot2::facet_grid for details)
+# This function should inherit from the S3 class "labeller" using as_labeller()
+# Returns only the selected columns als labels (other columns will not be shown in the facet strips)
+first.col.labeller <- function(labels) {
+
+  return(labels[1])
+
+}
+```
+
+
+
+```{r define_option_templates, echo = FALSE}
+# Experiments to derive the best RMarkdown code chunk options for ggplots
+# https://stackoverflow.com/questions/42742069/how-to-zoom-or-shrink-the-size-of-ggplot-or-simple-plot-in-rmarkdown-output
+# For a list of possible chunk options see:
+# https://yihui.name/knitr/options/#chunk_options
+num.bars <- max(test.case.groups.pivot.base$maturity.rank, na.rm = TRUE)
+# opts_template$set(test1 = list(out.height = 2000, out.width = 1200, fig.height = 8))
+opts_template$set(default_opts = list(out.width = 1000,
+                                      fig.height = 0.65 * num.bars,   # care for enough height and similar bar widths (e. g. 0.6 * #bars)
+                                      fig.align = 'left'))
+
+# How to use the template in a chunk:
+# {r, echo = FALSE, opts.label = 'default_opts'}
+```
+
+
+
+
+
+# Disclaimer
+
+This and the accompanying reports show the compliance level of different test set-ups
+(mainly a combination of a database system, R DBI driver package and the operating system).
+
+Do not draw conclusions about the stability, maturity, ready-for-production-ness or any type of comparisson
+(even between different test set-ups) without in-depth analysis of your your requirements, current situation
+and indiviual requirements.
+
+Especially these reports are not meant to blame anybody about anything.
+
+
+
+# TODO include DBI intro and use cases from readme file
 
 
 
@@ -65,12 +128,15 @@ There are only three colors used to mark test result rates (percentages):
 
 All test results in this report are based on a **per test case count** (if not otherwise stated).
 
+Each test result is based on a test configuration.
+
+The test configurations are shown on the vertical axis.
 
 
 ## Ranked by total DBI-compliance
 
 
-```{r Total Summary, echo = FALSE, fig.align = 'left', out.width=800}
+```{r Total Summary, echo = FALSE, fig.align = 'left', opts.label = 'default_opts'}
 TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
 
 # To order by the maturity rank (= best results first) the sorted factor is required
@@ -79,6 +145,7 @@ data[, test.config.label := factor(test.config.label, levels = unique(test.confi
 
 d <- ggplot(data,
   aes(x = test.config.label, y = TC.pct), fill = TC.result) +
+  ggtitle("Total result per test configuration (ranked by DBI-compliance)") +
   geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
   # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 10) + # does not work
   # number of test cases as label
@@ -90,15 +157,17 @@ d <- ggplot(data,
   # now axis label (redundant to facet name)
   xlab("") + # xlab("Test Case Group") +
   # assign intuitive colors to stacked bars
-  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  scale_fill_manual(values = TC.result.colors, name = "Test case result:") +
   coord_flip() +
   scale_y_continuous(breaks = seq(0, 100, by = 10)) +
   # scale_y_continuous(labels = scales::percent) +  # percent labels
-  ggtitle("Total result ranked by DBI-compliance") +
-  theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  # theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  report_theme() +
   # Show total summary and details per test case group in two plots below each other
   # facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
-  facet_grid(client.OS.name ~ ., scales = "free_y", space = "free_y")
+  ##### facet_grid(client.OS.name ~ ., scales = "free_y", space = "free_y")  # facet label right
+  ######### facet_wrap(~ client.OS.name, ncol = 1, scales = "free_y")   # facet label on top
+  facet_grid(client.OS.name.generic ~ ., scales = "free", space = "free", labeller = first.col.labeller)
   # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
 d # show the plot
 ```
@@ -109,7 +178,7 @@ d # show the plot
 
 Compares different test configurations for the same database to show the best configuration.
 
-```{r Total Summary per DBMS, echo = FALSE, fig.align = 'left', out.width=800}
+```{r Total Summary per DBMS, echo = FALSE, fig.align = 'left', opts.label = 'default_opts'}
 TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
 
 # To order by the maturity rank (= best results first) the sorted factor is required
@@ -118,6 +187,7 @@ data[, test.config.label := factor(test.config.label, levels = unique(test.confi
 
 d <- ggplot(data,
   aes(x = test.config.label, y = TC.pct), fill = TC.result) +
+  ggtitle("Total result per DBMS ranked by DBI-compliance") +
   geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
   # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 10) + # does not work
   # number of test cases as label
@@ -129,25 +199,31 @@ d <- ggplot(data,
   # now axis label (redundant to facet name)
   xlab("") + # xlab("Test Case Group") +
   # assign intuitive colors to stacked bars
-  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  scale_fill_manual(values = TC.result.colors, name = "Test case result:") +
   coord_flip() +
   scale_y_continuous(breaks = seq(0, 100, by = 10)) +
   # scale_y_continuous(labels = scales::percent) +  # percent labels
-  ggtitle("Total result per DBMS ranked by DBI-compliance") +
-  theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  # theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  report_theme() +
   # Show total summary and details per test case group in two plots below each other
   # facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
-  facet_grid(client.OS.name + DB.name ~ ., scales = "free_y", space = "free_y")
+  ##### facet_grid(client.OS.name + DB.name ~ ., scales = "free_y", space = "free_y")
+  ######### facet_wrap(~ client.OS.name + DB.name, ncol = 1, scales = "free_y")   # facet label on top
+  facet_grid(client.OS.name.generic + DB.name ~ ., scales = "free", space = "free", labeller = first.col.labeller)
   # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
 d # show the plot
 ```
+
 
 
 ## Ranking per DBI driver
 
 Compares different test configurations for the same DBI driver to show the best configuration
 
-```{r Total Summary per DBI driver, echo = FALSE, fig.align = 'left', out.width=800}
+
+```{r Total Summary per DBI driver, echo = FALSE, fig.align = 'left', opts.label = 'default_opts'}
+# out.width=1000 is perfect
+
 TC.result.colors <- eval(formals(derive.strings.HTML.color)$string.colors)   # DIRTY reuse default value of function argument
 
 # To order by the maturity rank (= best results first) the sorted factor is required
@@ -156,38 +232,67 @@ data[, test.config.label := factor(test.config.label, levels = unique(test.confi
 
 d <- ggplot(data,
   aes(x = test.config.label, y = TC.pct), fill = TC.result) +
-  geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7) +
-  # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 10) + # does not work
+  ggtitle("Total result per DBI driver package ranked by DBI compliance") +
+  geom_bar(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.75) +
+  # geom_histogram(stat = "identity", aes(fill = TC.result), position = position_stack(), width = 0.7, binwidth = 0.01) + # does not work (warning -> ignore binwidth)
   # number of test cases as label
   # Important: Requires data rows in the same order as test.group factors to show the TC.pct in the correct bar!
   #   Done before by sorting the data rows...
   geom_text(aes(x = test.config.label, y = TC.pct, label = test.cases),
-            position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.5) +
+            position = position_stack(vjust = 0.5), color = "white", fontface = "bold", size = 3.0) +
   ylab("Test case weights (in %) and counts") +
   # now axis label (redundant to facet name)
   xlab("") + # xlab("Test Case Group") +
   # assign intuitive colors to stacked bars
-  scale_fill_manual(values = TC.result.colors, name = "TC result") +
+  scale_fill_manual(values = TC.result.colors, name = "Test case result:") +
   coord_flip() +
   scale_y_continuous(breaks = seq(0, 100, by = 10)) +
   # scale_y_continuous(labels = scales::percent) +  # percent labels
-  ggtitle("Total result per DBI driver package ranked by DBI compliance") +
-  theme(plot.title = element_text(size = 12)) +     # ggtitle font size
+  report_theme() +
+  # theme(plot.title = element_text(size = 10),
+  #       axis.text = element_text(size = 8),
+  #       strip.text = element_text(size = 8),
+  #       axis.title = element_text(size = 8),
+  #       legend.text = element_text(size = 8),
+  #       legend.title = element_text(size = 10),
+  #       legend.position = "bottom") +     # ggtitle font size
   # Show total summary and details per test case group in two plots below each other
   # facet_grid( DB.name + DB.version + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
-  facet_grid(client.OS.name + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  #### facet_grid(client.OS.name + DBI.driver.pkg ~ ., scales = "free_y", space = "free_y")
+  # facet_wrap(~ client.OS.name + DBI.driver.pkg, ncol = 1, scales = "free_y")   # facet label on top
+  facet_grid(client.OS.name.generic + DBI.driver.pkg ~ ., scales = "free", space = "free", labeller = first.col.labeller)
   # date, DB.name, DB.version, DBI.driver.pkg, client.OS.name
 d # show the plot
 ```
 
 
 
-# Test results per test configuration
+# Test result reports for each test configuration
 
-For detailled results per test configuration click on the corresponding link:
+```{r, echo = FALSE}
+data <- test.case.groups.pivot.base[granularity == "All",
+                                    .(report.file.name = make.single.test.HTML.report.file.name(c(.BY, .SD)),
+                                      count = .N) ,
+                                    by = .(test.config.ID,date, DBI.driver.pkg, DB.name, DB.version, client.OS.name.generic, OS.driver.name, test.config.label)]
+# data[, report.file.name := make.single.test.HTML.report.file.name(data)]
+data[, report.link := paste0("[Show](", report.file.name, ")")]
 
-TODO
+data2 <- data[, .("Config.ID" = test.config.ID,
+                  "client OS" = client.OS.name.generic,
+                  DB.name, DB.version,
+                  DBI.driver.pkg,
+                  OS.driver.name,
+                  report = report.link)
+              ][order(Config.ID)]         # [order(`client OS`, DB.name, DB.version, DBI.driver.pkg)]
 
-# Test results per test case group
+data2 %>%
+kable("html", escape = FALSE)  %>%
+kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+```
+
+
+
+# Test results matrix per test case group and test configs
 
 TODO Compare test case groups over all test configs, per DBMS and per DBI driver

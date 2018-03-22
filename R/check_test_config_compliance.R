@@ -63,6 +63,7 @@ check.test.config.compliance <- function(test.config,
   }
 
 
+
   # Raw result as CSV file (for comparitive reports comparing different results)
   csv.file.name           <- make.raw.result.CSV.file.name(results.raw)
   csv.file.name.with.path <- file.path(output.folder, csv.file.name)

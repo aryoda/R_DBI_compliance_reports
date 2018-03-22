@@ -22,10 +22,14 @@ library(kableExtra)   # install.packages("kableExtra")
 # devtools::install_github("r-dbi/DBItest")
 # ...
 
+# For list of dynamically loaded DBI driver packages see the "test_configs.xlsx" file!
+
+
 
 source("R/get_test_configurations.R")
 source("R/run_single_compliance_test.R")
 source("R/enrich_raw_result.R")
+source("R/normalize_DBMS_names.R")
 source("R/summarize_single_test_results.R")
 source("R/make_results_file_name.R")
 source("R/save_raw_results_as_xlsx.R")
@@ -91,10 +95,13 @@ for (i in 1:NROW(active.test.configs)) {
 
 # Generate comparative reports ------------------------------------------------------------------------------------
 
-# (Much :-) TODO
+external.results.file <- "results/2018-02-19 internal/external_data_files.txt"
+external.result.file.list <- read.csv(external.results.file, header = FALSE, stringsAsFactors = FALSE)
+external.result.file.list <- external.result.file.list$V1
 
 data  <- collect.comparative.test.results(output.folder,
-                                          raw.result.files$csv.file.name)
+                                          raw.result.files$csv.file.name  # )
+                                          , external.result.file.list)
                                           # , "2018-02-13_odbc_MySQL_5.7.21_Ubuntu.14.04.5.LTS.csv") # test data!
 
 results <- new.env()

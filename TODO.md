@@ -43,9 +43,10 @@
   https://github.com/r-dbi/RMariaDB
 - Add all other "native" (non-ODBC) driver to the supported test configuration (e. g. google bigquery, RODBCDBI::ODBC()):
   https://github.com/r-dbi
+  https://github.com/agstudy/rsqlserver
 - How about other NoSQL databases?
   https://www.r-bloggers.com/database-interfaces/
-- Use R in a container to runt he conformity tests for a ready-to-use stable environment?
+- Use R in a container to run the conformity tests for a ready-to-use stable environment?
   E. g. similar to https://github.com/ruaridhw/dockerfiles/tree/master/rsqlserver/rstudio
 - rename project into "compliance" or "maturity"
 - Could a docker-enabled CI service support automatic updates of the reports?
@@ -58,8 +59,15 @@
     + showing the odbc driver from the connection string - or the whole connection string without credentials
     + in the comparative report by giving each test configuration a unique name
 - translation of internal database version numbers into "public" versions (e. g. postgresql 100001 = version 10.x)
+    - SELECT current_setting('server_version_num')
+    - https://wiki.postgresql.org/wiki/New_in_postgres_10#Change_in_Version_Numbering
+    - As of Version 10, PostgreSQL no longer uses three-part version numbers, but is shifting to two-part version numbers.
+      A six-digit integer version number which will be consistently sortable and comparable between versions 9.6 and 10
 - Normale DBMS names (column "DB.name") for consistent grouping per DBMS in comparative reports
 - replace data.table column indices with column names in the single test config report
+- consider most popular databases (MongoDB, Redis:
+  https://insights.stackoverflow.com/survey/2018/#technology-databases
+  https://insights.stackoverflow.com/survey/2018/#technology-most-loved-dreaded-and-wanted-databases
   
 
   

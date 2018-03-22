@@ -10,7 +10,8 @@
 #'
 make.results.file.name <- function(results.raw, file.ext, date.as.prefix = TRUE) {
 
-  date.prefix <- format(Sys.time(), format = "%Y-%m-%d")
+  # date.prefix <- format(Sys.time(), format = "%Y-%m-%d")
+  date.prefix <- format(results.raw$date[1], format = "%Y-%m-%d")
 
 
   file.name   <- paste0(results.raw$DBI.driver.pkg[1], "_",

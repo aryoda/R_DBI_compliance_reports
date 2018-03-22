@@ -50,3 +50,5 @@ results/*.csv
 # personal files
 /testthat*.txt
 /ggplot_test*
+/results/2018-02-19 internal
+
