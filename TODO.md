@@ -11,6 +11,8 @@
   Passed, Failed, Skipped with green, red, yellow background + personal notes + link to open ticket(s)...
 - Refactor code to allow better reuse for different DBI drivers and databases
 - Dockerize?
+- use "validation" instead of "compliance" ("item of validation", "validation result"...) to
+  reduce the felt severity of the results (which must be interpreted in the context of the planned usage)?
 ! Improve `DBItest` by opening feature requests:
   Annotate test cases with description, functions under test, link to test code,
   annotate each checked expectation with a good name, add a severity class to each test {fatal, err, warn, info} ...
