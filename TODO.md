@@ -21,13 +21,18 @@
   of available test case (since the DBItest::test_* functions have a skip parameter that skips tests
   that are not counted as skipped in testthat => let testthat do the skip instead of skip the test within DBItest
   [see run_test() in run.R] to allow testthat a consistent report of all skipped tests)
+- Option to mark tests as irrelevant + reason (to avoid false positives for unsupported features).
+  Could use skipping.
+- Extend DBItest to get a list of all tests to check the up-to-date available tests
+  against performed tests in old results (e. g. which one are missing due to newly added tests)?
 - add a better reporter for testthat that returns the most granular results
   (e. g. one row per expectation + support for the number of skipped tests instead of a logical flag)
 - List known DBI driver packages in the readme (reverse dependency of CRAN may help but it ignores new packages at github...)
 - store results as CSV file to be read again for comparing the results of different set-ups
 - also check odbc:RODBC bridge driver to show differences in implementations (RODBCDBI::ODBC())
 - call test_all + specify the skip param instead of calling every single test case group (for a correct skip summary)
-- fix or minimize transaction testing problem (e. g. via skip until the bug is fixed in `odbc`)
++ fix or minimize transaction testing problem (e. g. via skip until the bug is fixed in `odbc`)
+  Bug was fixed, see: https://github.com/r-dbi/odbc/issues/138
 - centralize used color scheme (color codes) to support changing it in one place (currently spreaded in the report)
 - rename testhat reporter column names in result.raw for consistent names in reports (no more renamings in reports)
 - result.raw: logical columns should be converted to Y/N (nicer in reports than true/false)
@@ -46,8 +51,10 @@
 - Add all other "native" (non-ODBC) driver to the supported test configuration (e. g. google bigquery, RODBCDBI::ODBC()):
   https://github.com/r-dbi
   https://github.com/agstudy/rsqlserver
-- How about other NoSQL databases?
+  https://github.com/imanuelcostigan/RSQLServer
+- How about other (No)SQL databases?
   https://www.r-bloggers.com/database-interfaces/
+  http://db.rstudio.com/databases/
 - Use R in a container to run the conformity tests for a ready-to-use stable environment?
   E. g. similar to https://github.com/ruaridhw/dockerfiles/tree/master/rsqlserver/rstudio
 - rename project into "compliance" or "maturity"
