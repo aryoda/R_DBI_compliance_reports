@@ -3,6 +3,13 @@
 
 ## Open
 
+- Use R in a container to run the conformity tests for a ready-to-use stable (reproducible) environment?
+  E. g. similar to https://github.com/ruaridhw/dockerfiles/tree/master/rsqlserver/rstudio
+  https://www.r-bloggers.com/fragment-running-multiple-services-such-as-jupyter-notebooks-and-a-postgres-database-in-a-single-docker-container/
+- Better docker automation (installation, updates, version management of DBMSes...)?
+  See package "harbor": https://github.com/wch/harbor
+- Could a docker-enabled CI service support automatic updates of the reports?
+  https://yutani.rbind.io/post/2017-10-18-circleci/
 - Create RMarkdown report for summarized and detailled results and plots (comparing all tested databases)
 - store historical results to show a time series of test results
 - Support consistent comparisson:
@@ -10,11 +17,11 @@
 - result details shall show per single test case:
   Passed, Failed, Skipped with green, red, yellow background + personal notes + link to open ticket(s)...
 - Refactor code to allow better reuse for different DBI drivers and databases
-- Dockerize?
 - use "validation" instead of "compliance" ("item of validation", "validation result"...) to
   reduce the felt severity of the results (which must be interpreted in the context of the planned usage)?
 ! Improve `DBItest` by opening feature requests:
-  Annotate test cases with description, functions under test, link to test code,
+  Annotate test cases with description (could already be done by Kirill, see "textual DBI specification" in https://www.r-dbi.org/blog/dbi-1-final/),
+  functions under test, link to test code,
   annotate each checked expectation with a good name, add a severity class to each test {fatal, err, warn, info} ...
   Make spec_*() public to be able to see the available test names and test code (without looking into
   the DBItest source code) + being able to compare the number of executed test cases against the number
@@ -55,11 +62,7 @@
 - How about other (No)SQL databases?
   https://www.r-bloggers.com/database-interfaces/
   http://db.rstudio.com/databases/
-- Use R in a container to run the conformity tests for a ready-to-use stable environment?
-  E. g. similar to https://github.com/ruaridhw/dockerfiles/tree/master/rsqlserver/rstudio
 - rename project into "compliance" or "maturity"
-- Could a docker-enabled CI service support automatic updates of the reports?
-  https://yutani.rbind.io/post/2017-10-18-circleci/
 - Find a way to stop long running or blocking tests after a defined grace period
   (e. g. caused by dead-locks or implementation problems with transactions)
 - Test runs on different client-side platforms and with different odbc drivers
@@ -77,7 +80,7 @@
 - consider most popular databases (MongoDB, Redis:
   https://insights.stackoverflow.com/survey/2018/#technology-databases
   https://insights.stackoverflow.com/survey/2018/#technology-most-loved-dreaded-and-wanted-databases
-  
+- Reference https://www.r-dbi.org in readme.md
 
   
   
