@@ -41,7 +41,7 @@ source("R/check_test_config_compliance.R")
 source("R/create_report.R")
 source("R/summarize_comparative_results.R")
 source("R/build_connect_string.R")
-source("R/collect_comparative_test_results.R")
+source("R/collect_test_results_from_files.R")
 
 
 
@@ -77,7 +77,8 @@ active.test.configs <- test.configs[execute.test.flag == TRUE, ]
 
 
 
-raw.result.files <- c()
+
+all.result.files <- c()
 
 for (i in 1:NROW(active.test.configs)) {
 
@@ -85,38 +86,66 @@ for (i in 1:NROW(active.test.configs)) {
 
   result.files <- check.test.config.compliance(test.config, output.folder)
 
-  raw.result.files <- rbind(raw.result.files, result.files)
+  all.result.files <- rbind(all.result.files, result.files)
 
+  # Append to an index file containing the result file names for all tested configurations
   data.table::fwrite(result.files, result.file.list, append = TRUE, sep = ";")
 
 }
 
+# The variable "raw.result.files" does now contain one row per tested configuration with the columns:
+# - csv.file.name (raw results as CSV file)
+# - Excel.file.name (raw results as Excel file)
+# - report.file.name (generated HTML report with the results)
 
 
-# Generate comparative reports ------------------------------------------------------------------------------------
 
-external.results.file <- "results/2018-02-19 internal/external_data_files.txt"
-external.result.file.list <- read.csv(external.results.file, header = FALSE, stringsAsFactors = FALSE)
-external.result.file.list <- external.result.file.list$V1
+# Generate report to compare archived results ----------------------------------------------------------------------------------
 
-data  <- collect.comparative.test.results(output.folder,
-                                          raw.result.files$csv.file.name  # )
-                                          , external.result.file.list)
-                                          # , "2018-02-13_odbc_MySQL_5.7.21_Ubuntu.14.04.5.LTS.csv") # test data!
+# The following code uses already existing test results (from archived file)
+# together with the just created test results
+# to generate a report that compares archived test results
+# without permanent retesting of old results.
+#
+# Note: If no archived test run files are checked in into the Git repo this is due to legal restrictions :-(
+#
+# To add test results to the report edit the index file and add your data file names:
+index.file.name <- "results/private_archive/list_of_archived_result_files.txt"   # modify with your sub folder and file name
 
-results <- new.env()
+if (file.exists(index.file.name)) {
 
-results$res.raw                     <- data
+  print("Info: Found archived data files...")
+
+  list.of.archived.result.files <- read.csv(index.file.name, header = FALSE, stringsAsFactors = FALSE)
+  list.of.archived.result.files <- list.of.archived.result.files$V1     # $V1 constains the file names
+
+} else {
+
+  print("Info: No archived test data files found...")
+  list.of.archived.result.files = NULL
+
+}
+
+data  <- collect.test.results.from.files(output.folder
+                                         , all.result.files$csv.file.name   # contains the file names with the results of the current test runs
+                                         , list.of.archived.result.files)   # contains file names with the results of the archived test runs
+
+results <- new.env()  # environment with all data and meta data to generate a report
+
+results$res.raw <- data
+results$archive.subfolder.name <- "private_archive"   # modify with your sub folder name
 results$test.case.groups.pivot.base <- counts.per.test.case.group.as.pivot.base(data, incl.totals = TRUE)
 
-
-
-# HTML result report
+# Generate HTML result report
+# TODO Hyperlink to single test run result reports do not work (missing sub folder + wrong report names)
 report.file.name   <- "Comparative_report.html"
 res.file <- create.report(results,
                           "report_templates/comparative_result_report.Rmd",
                           report.file.name,
                           output.folder = output.folder)
 
+# Open the generated report
 browseURL(file.path(output.folder, report.file.name))
+
+
 

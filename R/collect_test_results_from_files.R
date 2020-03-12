@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @examples
-collect.comparative.test.results <- function(output.folder, result.file.list, external.result.file.list = NULL, normalize.legacy.names = TRUE) {
+collect.test.results.from.files <- function(output.folder, result.file.list, external.result.file.list = NULL, normalize.legacy.names = TRUE) {
 
   stopifnot("character" == class(result.file.list))
   stopifnot(is.null(external.result.file.list) | "character" == class(external.result.file.list))

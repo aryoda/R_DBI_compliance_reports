@@ -1,3 +1,10 @@
+# Runs a single test (for one configuration) and writes the raw test results + a test report
+# Returns a data.table with one row and the columns:
+# - csv.file.name (raw results as CSV file)
+# - Excel.file.name (raw results as Excel file)
+# - report.file.name (generated HTML report with the results)
+#
+# TODO Rename (use a better function name)
 check.test.config.compliance <- function(test.config,
                                               output.folder = "results",
                                               write.raw.results.as.Excel.file = TRUE,

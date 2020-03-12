@@ -275,7 +275,8 @@ data <- test.case.groups.pivot.base[granularity == "All",
                                       count = .N) ,
                                     by = .(test.config.ID,date, DBI.driver.pkg, DB.name, DB.version, client.OS.name.generic, OS.driver.name, test.config.label)]
 # data[, report.file.name := make.single.test.HTML.report.file.name(data)]
-data[, report.link := paste0("[Show](", report.file.name, ")")]
+# data[, report.link := paste0("[Show](", file.path(archive.subfolder.name, report.file.name), ")")]
+data[, report.link := paste0("[Show](", file.path(archive.subfolder.name, report.file.name), ")")]
 
 data2 <- data[, .("Config.ID" = test.config.ID,
                   "client OS" = client.OS.name.generic,
