@@ -110,6 +110,13 @@ run.single.compliance.test <- function(DBI.driver, test.config, con.args.list, s
   test.results <- as.data.frame(rep$get_results())
   setDT(test.results)
 
+  # Bug fix for issue #7:
+  # Remove result columns added later to the testthat ListReporter that contain non-tabular data (but hierarchical lists!)
+  # https://github.com/r-lib/testthat/commit/9711653d573eb0d068d85edd65568a37f0b631db#diff-d873473b0d40d740adb55a10e54a8a0c
+  if ("result" %in% colnames(test.results))
+    test.results[, result := NULL]
+
+
 
   enrich.raw.result(test.results, test.config, con.args.list, DBI.driver, DB.info)
 

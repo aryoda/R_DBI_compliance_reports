@@ -44,7 +44,7 @@ collect.test.results.from.files <- function(output.folder, result.file.list, ext
 
 
 
-  res <- rbindlist(data, use.names = TRUE)
+  res <- rbindlist(data, use.names = TRUE, fill = TRUE)   # also fills missing columns added later to the testthat ListReporter
 
 
 
